@@ -1,0 +1,3861 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ירון אמיר | מערכת חוות דעת שמאי רכוש</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #161d27;
+    --card: #1c2534;
+    --card-hover: #212d40;
+    --border: #2a3a50;
+    --border-light: #334155;
+    --accent: #d4a853;
+    --accent-dark: #b8892f;
+    --accent-glow: rgba(212,168,83,0.15);
+    --text-primary: #e8edf3;
+    --text-secondary: #8fa3bc;
+    --text-muted: #5a7090;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --info: #3b82f6;
+    --fire: #f97316;
+    --water: #06b6d4;
+    --break: #a855f7;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 48px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    direction: rtl;
+  }
+
+  /* ====== HEADER ====== */
+  .header {
+    background: linear-gradient(135deg, #0a0f15 0%, #111827 50%, #0d1520 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .logo-text {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .logo-sub {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: block;
+    margin-top: -2px;
+    font-weight: 300;
+  }
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* ====== BUTTONS ====== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: var(--radius-sm);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: #0f1419;
+    font-weight: 700;
+  }
+  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(212,168,83,0.4); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--card); color: var(--text-primary); }
+  .btn-danger {
+    background: rgba(239,68,68,0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239,68,68,0.3);
+  }
+  .btn-danger:hover { background: rgba(239,68,68,0.25); }
+  .btn-success {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    font-weight: 700;
+  }
+  .btn-success:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .btn-lg { padding: 14px 32px; font-size: 1rem; }
+
+  /* ====== LAYOUT ====== */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* ====== PROGRESS BAR ====== */
+  .progress-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .progress-label { font-size: 0.85rem; color: var(--text-muted); min-width: 80px; }
+  .progress-bar-outer {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+  .progress-pct { font-size: 0.85rem; color: var(--accent); font-weight: 600; min-width: 40px; text-align: left; }
+
+  /* ====== STEP TITLE ====== */
+  .step-header {
+    margin-bottom: 1.5rem;
+  }
+  .step-header h2 {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+  .step-header p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  /* ====== CARDS ====== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--border-light); }
+  .card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.02);
+  }
+  .card-header-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .card-header h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    flex: 1;
+  }
+  .card-header .badge {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-weight: 600;
+  }
+  .badge-required { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .badge-optional { background: rgba(100,116,139,0.2); color: var(--text-muted); }
+  .card-body { padding: 1.25rem; }
+
+  /* ====== EVENT TYPE SELECTOR ====== */
+  .event-types {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .event-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .event-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .event-card:hover { transform: translateY(-3px); }
+  .event-card.active { border-width: 2px; transform: translateY(-3px); }
+  .event-card .icon { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+  .event-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .event-card p { font-size: 0.78rem; color: var(--text-secondary); }
+
+  .event-card.fire { --ec: var(--fire); }
+  .event-card.water { --ec: var(--water); }
+  .event-card.break-in { --ec: var(--break); }
+  .event-card.earthquake { --ec: #f59e0b; }
+  .event-card.other { --ec: var(--text-muted); }
+
+  .event-card:hover { border-color: var(--ec, var(--accent)); box-shadow: 0 0 24px rgba(var(--ec-raw,212,168,83),0.15); }
+  .event-card.active { border-color: var(--ec, var(--accent)); background: color-mix(in srgb, var(--ec,var(--accent)) 8%, var(--surface)); box-shadow: 0 0 32px color-mix(in srgb, var(--ec,var(--accent)) 20%, transparent); }
+  .event-card.active .check { display: flex !important; }
+  .check {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--ec, var(--accent));
+    color: white;
+    font-size: 12px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ====== FORM ELEMENTS ====== */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-grid.cols-1 { grid-template-columns: 1fr; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+  label .req { color: var(--accent); margin-right: 3px; }
+
+  input[type="text"], input[type="number"], input[type="date"],
+  select, textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text-primary);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    direction: rtl;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  input::placeholder, textarea::placeholder { color: var(--text-muted); }
+  textarea { resize: vertical; min-height: 90px; }
+  select option { background: var(--card); }
+
+  /* ====== CHECKBOXES / TOGGLES ====== */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .checkbox-item:hover { border-color: var(--border-light); background: var(--card); }
+  .checkbox-item.checked { border-color: var(--accent); background: var(--accent-glow); }
+  .checkbox-item input[type="checkbox"] { display: none; }
+  .cb-box {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border-light);
+    border-radius: 5px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    font-size: 12px;
+    color: transparent;
+  }
+  .checkbox-item.checked .cb-box {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0f1419;
+  }
+  .cb-label { font-size: 0.88rem; font-weight: 500; flex: 1; }
+  .cb-sub { font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 1px; }
+
+  /* ====== RADIO GROUPS ====== */
+  .radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .radio-btn {
+    padding: 8px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 99px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    user-select: none;
+    color: var(--text-secondary);
+    background: var(--surface);
+  }
+  .radio-btn:hover { border-color: var(--border-light); color: var(--text-primary); }
+  .radio-btn.active { border-color: var(--accent); background: var(--accent-glow); color: var(--accent); }
+
+  /* ====== SECTION EXPANDER ====== */
+  .section {
+    margin-bottom: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .section.has-content { border-color: var(--border-light); }
+  .section-trigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .section-trigger:hover { background: rgba(255,255,255,0.03); }
+  .section-number {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .section.has-content .section-number { background: var(--accent); color: #0f1419; }
+  .section-trigger h3 { font-size: 0.95rem; font-weight: 600; flex: 1; }
+  .section-arrow { color: var(--text-muted); transition: transform 0.25s; font-size: 1rem; }
+  .section.open .section-arrow { transform: rotate(180deg); }
+  .section-content {
+    padding: 0 1.25rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+  }
+  .section.open .section-content { max-height: 2000px; padding: 0 1.25rem 1.25rem; }
+  .section-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 1rem; }
+
+  /* ====== DAMAGE ITEMS ====== */
+  .damage-items { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+  .damage-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: center;
+    animation: slideIn 0.25s ease;
+    transition: border-color 0.2s, opacity 0.2s;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  .damage-item input { margin: 0; }
+  .damage-item .remove-btn {
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.2s;
+  }
+  .damage-item .remove-btn:hover { background: rgba(239,68,68,0.15); }
+  .damage-total {
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+  .damage-total span { color: var(--accent); font-weight: 700; font-size: 1.05rem; }
+
+  /* ====== IMAGE UPLOAD ====== */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+  }
+  .upload-zone:hover { border-color: var(--accent); background: var(--accent-glow); }
+  .upload-zone .up-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .upload-zone p { font-size: 0.88rem; color: var(--text-secondary); }
+  .upload-zone strong { color: var(--accent); }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 1rem;
+  }
+  .photo-thumb {
+    aspect-ratio: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-thumb .rm-photo {
+    position: absolute; top: 4px; left: 4px;
+    background: rgba(0,0,0,0.7);
+    border: none; border-radius: 50%;
+    color: white; width: 22px; height: 22px;
+    font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .photo-thumb:hover .rm-photo { opacity: 1; }
+  .photo-thumb .caption-input {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.75);
+    border: none; border-radius: 0;
+    color: white; font-size: 0.7rem;
+    padding: 4px 8px;
+    display: none;
+  }
+  .photo-thumb:hover .caption-input { display: block; }
+
+  /* ====== STEPS ====== */
+  .steps-nav {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .step-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid var(--border);
+    color: var(--text-muted);
+    background: transparent;
+  }
+  .step-pill.active { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .step-pill.done { border-color: var(--success); color: var(--success); background: rgba(34,197,94,0.1); }
+  .step-pill .sp-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: currentColor;
+    color: var(--bg);
+    font-size: 0.7rem;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.9;
+  }
+
+  /* ====== CONCLUSION CARD ====== */
+  .conclusion-box {
+    background: linear-gradient(135deg, rgba(212,168,83,0.08), rgba(212,168,83,0.03));
+    border: 1.5px solid rgba(212,168,83,0.3);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .conclusion-box h3 {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.15rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .amount-display {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+    font-family: 'Frank Ruhl Libre', serif;
+    margin: 0.5rem 0;
+  }
+
+  /* ====== PREVIEW / REPORT ====== */
+  .report-preview {
+    background: #ffffff;
+    color: #1a1a2e;
+    border-radius: var(--radius);
+    padding: 3rem;
+    direction: rtl;
+    font-family: 'Heebo', sans-serif;
+    line-height: 1.7;
+    box-shadow: var(--shadow-lg);
+    min-height: 400px;
+  }
+  .report-preview .rp-header {
+    text-align: center;
+    border-bottom: 3px solid #d4a853;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .report-preview .rp-logo { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .report-preview .rp-title {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #0f1419;
+    margin-bottom: 0.3rem;
+  }
+  .report-preview .rp-sub { font-size: 0.9rem; color: #64748b; }
+  .report-preview .rp-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 2rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.88rem;
+  }
+  .report-preview .rp-meta dt { color: #64748b; font-weight: 600; }
+  .report-preview .rp-meta dd { color: #1a1a2e; font-weight: 500; }
+  .report-preview h2 {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.1rem;
+    color: #0f1419;
+    border-right: 4px solid #d4a853;
+    padding-right: 10px;
+    margin: 1.5rem 0 0.75rem;
+  }
+  .report-preview p, .report-preview li {
+    font-size: 0.9rem;
+    color: #334155;
+    margin-bottom: 0.4rem;
+  }
+  .report-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.75rem 0;
+    font-size: 0.88rem;
+  }
+  .report-preview th {
+    background: #0f1419;
+    color: white;
+    padding: 8px 12px;
+    text-align: right;
+    font-weight: 600;
+  }
+  .report-preview td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+  }
+  .report-preview tr:nth-child(even) td { background: #f8fafc; }
+  .report-preview .rp-total {
+    background: #d4a853;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .report-preview .rp-signature {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+  .report-preview .sig-box {
+    width: 180px;
+    border-top: 1px solid #94a3b8;
+    padding-top: 6px;
+    text-align: center;
+  }
+
+  /* ====== TOAST ====== */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--card);
+    border: 1px solid var(--border-light);
+    border-radius: 99px;
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* ====== POLICY TYPE CARDS ====== */
+  .policy-type-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 0.75rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .policy-type-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
+  .policy-type-card.active {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(212,168,83,0.2);
+  }
+  .pt-icon { font-size: 1.6rem; margin-bottom: 0.35rem; }
+  .pt-title { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
+  .pt-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+  .policy-type-card.active .pt-title { color: var(--accent); }
+
+  /* ====== ADEQUACY BOXES ====== */
+  .adequacy-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .adequacy-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    text-align: center;
+  }
+  .adequacy-item .ai-label { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px; }
+  .adequacy-item .ai-value { font-size: 1.05rem; font-weight: 700; }
+  .adequacy-item.danger { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.05); }
+  .adequacy-item.warning { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.05); }
+  .adequacy-item.success { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.05); }
+  .adequacy-item.danger .ai-value { color: var(--danger); }
+  .adequacy-item.warning .ai-value { color: var(--warning); }
+  .adequacy-item.success .ai-value { color: var(--success); }
+
+  /* UNDERINSURANCE RULE box */
+  .underins-rule {
+    background: var(--surface);
+    border-right: 4px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 16px;
+    font-size: 0.87rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+  .underins-rule strong { color: var(--text-primary); display: block; margin-bottom: 4px; }
+
+  /* COVERAGE TAG badges */
+  .coverage-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .coverage-tag.covered { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+  .coverage-tag.excluded { background: rgba(239,68,68,0.12); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); text-decoration: line-through; opacity:0.8; }
+  .coverage-tag.partial { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+
+  /* DAMAGE CATEGORY TAG in table */
+  .dmg-cat {
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .dmg-cat.structure { background: rgba(59,130,246,0.15); color: #3b82f6; }
+  .dmg-cat.contents { background: rgba(168,85,247,0.15); color: #a855f7; }
+  .dmg-cat.excluded-tag { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+  /* ====== BOQ – BILL OF QUANTITIES ====== */
+  .boq-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    animation: slideIn 0.25s ease;
+  }
+  .boq-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.9rem 1.1rem;
+    background: rgba(255,255,255,0.025);
+    border-bottom: 1px solid var(--border);
+  }
+  .boq-section-num {
+    background: var(--accent);
+    color: #0f1419;
+    font-size: 0.75rem;
+    font-weight: 800;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .boq-section-title {
+    flex: 1;
+    font-size: 0.92rem;
+    font-weight: 700;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: 'Heebo', sans-serif;
+    outline: none;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  .boq-section-title:focus { background: rgba(255,255,255,0.05); }
+  .boq-section-total { font-size: 0.88rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .boq-delete-section { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 4px 6px; border-radius: 6px; transition: all 0.15s; }
+  .boq-delete-section:hover { background: rgba(239,68,68,0.15); color: var(--danger); }
+
+  .boq-table { width: 100%; border-collapse: collapse; }
+  .boq-table thead tr { background: rgba(255,255,255,0.03); }
+  .boq-table th { padding: 7px 10px; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .boq-table th.num-col { width: 52px; text-align: center; }
+  .boq-table th.unit-col { width: 75px; }
+  .boq-table th.qty-col { width: 75px; }
+  .boq-table th.price-col { width: 95px; }
+  .boq-table th.total-col { width: 110px; text-align: left; }
+  .boq-table th.act-col { width: 32px; }
+  .boq-table td { padding: 5px 10px; border-bottom: 1px solid rgba(42,58,80,0.5); vertical-align: middle; }
+  .boq-table td.num-col { font-size: 0.73rem; color: var(--text-muted); text-align: center; font-weight: 600; }
+  .boq-table input[type="text"], .boq-table input[type="number"], .boq-table select { background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 7px; color: var(--text-primary); font-family: 'Heebo', sans-serif; font-size: 0.84rem; width: 100%; transition: border-color 0.15s, background 0.15s; outline: none; }
+  .boq-table input:hover, .boq-table select:hover { border-color: var(--border-light); background: rgba(255,255,255,0.03); }
+  .boq-table input:focus, .boq-table select:focus { border-color: var(--accent); background: rgba(212,168,83,0.06); }
+  .boq-table .total-cell { font-weight: 700; color: var(--text-primary); font-size: 0.87rem; text-align: left; }
+  .boq-table .del-row { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; padding: 3px 5px; border-radius: 4px; transition: all 0.15s; display: block; margin: auto; }
+  .boq-table .del-row:hover { background: rgba(239,68,68,0.15); color: var(--danger); }
+
+  .boq-add-row { display: flex; align-items: center; gap: 8px; padding: 0.6rem 1rem; border-top: 1px dashed var(--border); background: rgba(255,255,255,0.01); }
+  .boq-add-row select { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 12px; color: var(--text-secondary); font-family: 'Heebo', sans-serif; font-size: 0.84rem; outline: none; }
+  .boq-add-row select:focus { border-color: var(--accent); color: var(--text-primary); }
+
+  .boq-suggestion-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 99px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); color: var(--text-secondary); background: var(--surface); transition: all 0.18s; user-select: none; }
+  .boq-suggestion-tag:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .boq-suggestion-tag.added { border-color: var(--success); color: var(--success); background: rgba(34,197,94,0.08); cursor: default; }
+
+  .boq-sum-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--border); margin-bottom: 6px; font-size: 0.88rem; }
+  .boq-sum-row .sr-label { color: var(--text-secondary); }
+  .boq-sum-row .sr-amount { font-weight: 700; color: var(--text-primary); }
+  .boq-sum-row.grand { background: rgba(212,168,83,0.08); border-color: rgba(212,168,83,0.3); }
+  .boq-sum-row.grand .sr-label { color: var(--accent); font-weight: 700; }
+  .boq-sum-row.grand .sr-amount { color: var(--accent); font-size: 1rem; }
+
+  .hidden { display: none !important; }
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-2 { gap: 0.5rem; }
+  .gap-3 { gap: 0.75rem; }
+  .mb-3 { margin-bottom: 0.75rem; }
+  .mb-4 { margin-bottom: 1rem; }
+  .mt-4 { margin-top: 1rem; }
+  .text-sm { font-size: 0.85rem; }
+  .text-muted { color: var(--text-muted); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 768px) {
+    .event-types { grid-template-columns: 1fr 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid.cols-3 { grid-template-columns: 1fr 1fr; }
+    .damage-item { grid-template-columns: 1fr 1fr; }
+    .photo-grid { grid-template-columns: repeat(3, 1fr); }
+    .main { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🏛️</div>
+      <div>
+        <div class="logo-text">ירון אמיר</div>
+        <span class="logo-sub">מערכת חוות דעת שמאי רכוש</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="resetAll()">🔄 איפוס</button>
+      <button class="btn btn-primary" onclick="goToStep(currentStep+1)" id="headerNextBtn">המשך →</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- STEPS NAV -->
+  <div class="steps-nav" id="stepsNav">
+    <div class="step-pill active" onclick="goToStep(1)" data-step="1">
+      <span class="sp-num">1</span> פרטי המבוטח
+    </div>
+    <div class="step-pill" onclick="goToStep(2)" data-step="2">
+      <span class="sp-num">2</span> סוג האירוע
+    </div>
+    <div class="step-pill" onclick="goToStep(3)" data-step="3">
+      <span class="sp-num">3</span> פרטי הנכס
+    </div>
+    <div class="step-pill" onclick="goToStep(4)" data-step="4">
+      <span class="sp-num">4</span> פרטי הפוליסה
+    </div>
+    <div class="step-pill" onclick="goToStep(5)" data-step="5">
+      <span class="sp-num">5</span> תיאור הנזק
+    </div>
+    <div class="step-pill" onclick="goToStep(6)" data-step="6">
+      <span class="sp-num">6</span> כתב כמויות
+    </div>
+    <div class="step-pill" onclick="goToStep(7)" data-step="7">
+      <span class="sp-num">7</span> תמונות ומסמכים
+    </div>
+    <div class="step-pill" onclick="goToStep(8)" data-step="8">
+      <span class="sp-num">8</span> מסקנות
+    </div>
+    <div class="step-pill" onclick="goToStep(9)" data-step="9">
+      <span class="sp-num">9</span> תצוגה מקדימה
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <span class="progress-label" id="progLabel">שלב 1 מתוך 9</span>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="progBar" style="width:11%"></div>
+    </div>
+    <span class="progress-pct" id="progPct">13%</span>
+  </div>
+
+  <!-- ============ STEP 1: INSURED DETAILS ============ -->
+  <div id="step1" class="step-content">
+    <div class="step-header">
+      <h2>👤 פרטי המבוטח</h2>
+      <p>מלא את פרטי המבוטח — הם ישמשו לאוטומציה בשאר הטופס.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(168,85,247,0.15)">👤</div>
+        <h3>פרטים אישיים</h3>
+        <span class="badge badge-required">חובה</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>שם מלא <span class="req">*</span></label>
+            <input type="text" id="insuredName" placeholder="שם מלא" oninput="autoFillFromInsured()">
+          </div>
+          <div class="form-group">
+            <label>מספר ת.ז. / ח.פ. <span class="req">*</span></label>
+            <input type="text" id="insuredId" placeholder="ת.ז. / ח.פ." oninput="autoFillFromInsured()">
+          </div>
+          <div class="form-group">
+            <label>טלפון</label>
+            <input type="text" id="insuredPhone" placeholder="מספר טלפון">
+          </div>
+          <div class="form-group">
+            <label>דוא"ל</label>
+            <input type="text" id="insuredEmail" placeholder="כתובת דוא״ל">
+          </div>
+          <div class="form-group">
+            <label>קשר לנכס</label>
+            <select id="insuredRelation">
+              <option value="">בחר...</option>
+              <option>בעלים</option>
+              <option>שוכר</option>
+              <option>מורשה / מיופה כוח</option>
+              <option>ירושה</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ STEP 2: EVENT TYPE ============ -->
+  <div id="step2" class="step-content hidden">
+    <div class="step-header">
+      <h2>🎯 סוג האירוע</h2>
+      <p>בחר את סוג האירוע שגרם לנזק. הבחירה תקבע את שאלות הפרק הרלוונטיות.</p>
+    </div>
+
+    <div class="event-types">
+      <div class="event-card fire" onclick="selectEvent('fire',this)">
+        <div class="check">✓</div>
+        <span class="icon">🔥</span>
+        <h3>שריפה</h3>
+        <p>נזקי אש, עשן ופיח</p>
+      </div>
+      <div class="event-card water" onclick="selectEvent('water',this)">
+        <div class="check">✓</div>
+        <span class="icon">💧</span>
+        <h3>נזקי מים</h3>
+        <p>הצפה, נזילה, פריצת צנרת</p>
+      </div>
+      <div class="event-card break-in" onclick="selectEvent('break_in',this)">
+        <div class="check">✓</div>
+        <span class="icon">🔓</span>
+        <h3>פריצה</h3>
+        <p>גניבה, שבירה, ונדליזם</p>
+      </div>
+      <div class="event-card earthquake" onclick="selectEvent('earthquake',this)">
+        <div class="check">✓</div>
+        <span class="icon">🌍</span>
+        <h3>רעידת אדמה</h3>
+        <p>נזקים מרעידת אדמה</p>
+      </div>
+      <div class="event-card other" onclick="selectEvent('other',this)">
+        <div class="check">✓</div>
+        <span class="icon">📋</span>
+        <h3>אחר</h3>
+        <p>סופה, ברד, נזק שונה</p>
+      </div>
+    </div>
+
+    <div id="eventTypeDetails" class="hidden">
+      <div class="card mt-4">
+        <div class="card-header">
+          <div class="card-header-icon" id="evDetailIcon">🔍</div>
+          <h3 id="evDetailTitle">פרטי האירוע</h3>
+          <span class="badge badge-required">חובה</span>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>תאריך האירוע <span class="req">*</span></label>
+              <input type="date" id="eventDate" required oninput="autoFillFromInsured()">
+            </div>
+            <div class="form-group">
+              <label>שעת האירוע</label>
+              <input type="text" id="eventTime" placeholder="לדוגמה: 14:30">
+            </div>
+            <div class="form-group">
+              <label>כיצד נתגלה האירוע <span class="req">*</span></label>
+              <select id="discoveryMethod">
+                <option value="">בחר...</option>
+                <option>על ידי בעל הנכס</option>
+                <option>על ידי שכן</option>
+                <option>על ידי עובד / שוכר</option>
+                <option>על ידי כוחות הביטחון</option>
+                <option>על ידי מכבי אש / חירום</option>
+                <option>אחר</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>האם דווח למשטרה / רשויות</label>
+              <div class="radio-group" id="reportedToAuth">
+                <div class="radio-btn" onclick="selectRadio(this,'reportedToAuth')">כן</div>
+                <div class="radio-btn" onclick="selectRadio(this,'reportedToAuth')">לא</div>
+                <div class="radio-btn" onclick="selectRadio(this,'reportedToAuth')">לא רלוונטי</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mt-4" style="margin-top:1rem">
+            <label>תיאור האירוע בקצרה <span class="req">*</span></label>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:8px">
+              🔒 ממולא אוטומטית לפי פרטי המבוטח ותאריך האירוע
+              <button type="button" onclick="autoFillFromInsured()" style="background:rgba(212,168,83,0.15);border:1px solid rgba(212,168,83,0.3);color:var(--accent);border-radius:99px;padding:2px 10px;font-size:0.72rem;cursor:pointer;font-family:inherit">↺ רענן</button>
+            </div>
+            <textarea id="eventBrief" style="min-height:90px"></textarea>
+          </div>
+
+          <!-- FIRE SPECIFIC -->
+          <div id="fireSpecific" class="event-specific hidden">
+            <hr class="divider">
+            <p class="text-sm text-muted mb-3">🔥 שאלות ייחודיות לנזקי שריפה</p>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>מקור הדלקה</label>
+                <select id="fireCause">
+                  <option value="">בחר...</option>
+                  <option>קצר חשמלי</option>
+                  <option>שימוש בנר / גפרורים</option>
+                  <option>ציוד חשמלי תקול</option>
+                  <option>הצתה מכוונת</option>
+                  <option>חום חיצוני</option>
+                  <option>לא ידוע</option>
+                  <option>אחר</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>היקף השריפה</label>
+                <div class="radio-group" id="fireScope">
+                  <div class="radio-btn" onclick="selectRadio(this,'fireScope')">חדר אחד</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireScope')">מספר חדרים</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireScope')">כל הנכס</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireScope')">מעבר לנכס</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>נזקי עשן ופיח</label>
+                <div class="radio-group" id="smokeScope">
+                  <div class="radio-btn" onclick="selectRadio(this,'smokeScope')">אין</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'smokeScope')">קל</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'smokeScope')">בינוני</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'smokeScope')">חמור</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>האם הופעל מטף/ספרינקלר</label>
+                <div class="radio-group" id="fireExtinguisher">
+                  <div class="radio-btn" onclick="selectRadio(this,'fireExtinguisher')">כן</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireExtinguisher')">לא</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireExtinguisher')">אין</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:1rem">
+              <label>האם מכבי אש הגיעו לזירה?</label>
+              <div class="radio-group" id="fireFighters">
+                <div class="radio-btn" onclick="selectRadio(this,'fireFighters')">כן</div>
+                <div class="radio-btn" onclick="selectRadio(this,'fireFighters')">לא</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- WATER SPECIFIC -->
+          <div id="waterSpecific" class="event-specific hidden">
+            <hr class="divider">
+            <p class="text-sm text-muted mb-3">💧 שאלות ייחודיות לנזקי מים</p>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>מקור הנזילה / הצפה</label>
+                <select id="waterSource">
+                  <option value="">בחר...</option>
+                  <option>צנרת פנימית</option>
+                  <option>אמבטיה / מקלחת</option>
+                  <option>מכונת כביסה / מדיח</option>
+                  <option>גג / רעפים</option>
+                  <option>שכן מלמעלה</option>
+                  <option>הצפה חיצונית</option>
+                  <option>לא ידוע</option>
+                  <option>אחר</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>משך הנזילה</label>
+                <select id="waterDuration">
+                  <option value="">בחר...</option>
+                  <option>פחות משעה</option>
+                  <option>מספר שעות</option>
+                  <option>יממה</option>
+                  <option>מספר ימים</option>
+                  <option>לא ידוע</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>גובה המים (בקירוב)</label>
+                <input type="text" id="waterLevel" placeholder="לדוגמה: 5 ס״מ">
+              </div>
+              <div class="form-group">
+                <label>האם הצנרת תוקנה</label>
+                <div class="radio-group" id="waterFixed">
+                  <div class="radio-btn" onclick="selectRadio(this,'waterFixed')">כן</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'waterFixed')">לא</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'waterFixed')">בתהליך</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>האם יש עובש / לחות</label>
+                <div class="radio-group" id="moldPresent">
+                  <div class="radio-btn" onclick="selectRadio(this,'moldPresent')">כן</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'moldPresent')">לא</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>קומת הנכס שנפגע</label>
+                <input type="text" id="waterFloor" placeholder="לדוגמה: קומה 3">
+              </div>
+            </div>
+          </div>
+
+          <!-- BREAK-IN SPECIFIC -->
+          <div id="break_inSpecific" class="event-specific hidden">
+            <hr class="divider">
+            <p class="text-sm text-muted mb-3">🔓 שאלות ייחודיות לאירוע פריצה</p>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>נקודת הכניסה</label>
+                <select id="entryPoint">
+                  <option value="">בחר...</option>
+                  <option>דלת ראשית</option>
+                  <option>דלת אחורית</option>
+                  <option>חלון</option>
+                  <option>ממ"ד / מרפסת</option>
+                  <option>מפתח כפול</option>
+                  <option>לא ידוע</option>
+                  <option>אחר</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>האם הייתה מערכת אזעקה</label>
+                <div class="radio-group" id="alarmSystem">
+                  <div class="radio-btn" onclick="selectRadio(this,'alarmSystem')">כן, פעילה</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'alarmSystem')">כן, לא פעילה</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'alarmSystem')">אין</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>האם הייתה מצלמות אבטחה</label>
+                <div class="radio-group" id="cctv">
+                  <div class="radio-btn" onclick="selectRadio(this,'cctv')">כן</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'cctv')">לא</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>מספר תיק משטרה</label>
+                <input type="text" id="policeCase" placeholder="מספר תיק">
+              </div>
+              <div class="form-group">
+                <label>האם הכניסה נפרצה בכוח</label>
+                <div class="radio-group" id="forcedEntry">
+                  <div class="radio-btn" onclick="selectRadio(this,'forcedEntry')">כן</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'forcedEntry')">לא</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>ניזקי ונדליזם</label>
+                <div class="radio-group" id="vandalism">
+                  <div class="radio-btn" onclick="selectRadio(this,'vandalism')">כן</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'vandalism')">לא</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EARTHQUAKE SPECIFIC -->
+          <div id="earthquakeSpecific" class="event-specific hidden">
+            <hr class="divider">
+            <p class="text-sm text-muted mb-3">🌍 שאלות ייחודיות לרעידת אדמה</p>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>עוצמת הרעידה (ריכטר)</label>
+                <input type="number" id="richter" placeholder="לדוגמה: 4.5" step="0.1" min="0" max="10">
+              </div>
+              <div class="form-group">
+                <label>סוג הנזק המבני</label>
+                <div class="checkbox-group" id="quakeDamage">
+                  <label class="checkbox-item">
+                    <input type="checkbox"><div class="cb-box">✓</div>
+                    <span class="cb-label">סדקים בקירות</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox"><div class="cb-box">✓</div>
+                    <span class="cb-label">נזק לתקרה</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox"><div class="cb-box">✓</div>
+                    <span class="cb-label">פגיעה ביסודות</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OTHER SPECIFIC -->
+          <div id="otherSpecific" class="event-specific hidden">
+            <hr class="divider">
+            <p class="text-sm text-muted mb-3">📋 תיאור אירוע כללי</p>
+            <div class="form-group">
+              <label>סוג האירוע / גורם הנזק <span class="req">*</span></label>
+              <input type="text" id="otherEventType" placeholder="תאר את סוג האירוע (סופה, ברד, התנגשות, ...)">
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 2: PROPERTY DETAILS ============ -->
+  <div id="step3" class="step-content hidden">
+    <div class="step-header">
+      <h2>🏠 פרטי הנכס</h2>
+      <p>מלא את פרטי הנכס הניזוק לצורך זיהוי ותיעוד מדויק.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(59,130,246,0.15)">📍</div>
+        <h3>מיקום הנכס</h3>
+        <span class="badge badge-required">חובה</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid cols-3">
+          <div class="form-group">
+            <label>רחוב <span class="req">*</span></label>
+            <input type="text" id="propStreet" placeholder="רחוב">
+          </div>
+          <div class="form-group">
+            <label>מספר בית</label>
+            <input type="text" id="propNum" placeholder="מס׳">
+          </div>
+          <div class="form-group">
+            <label>דירה</label>
+            <input type="text" id="propApt" placeholder="דירה">
+          </div>
+          <div class="form-group">
+            <label>עיר / יישוב <span class="req">*</span></label>
+            <input type="text" id="propCity" placeholder="עיר">
+          </div>
+          <div class="form-group">
+            <label>קוד דירה / גוש חלקה</label>
+            <input type="text" id="propParcel" placeholder="גוש / חלקה">
+          </div>
+          <div class="form-group">
+            <label>קומה</label>
+            <input type="text" id="propFloor" placeholder="קומה">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-4" style="margin-top:1rem">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(34,197,94,0.15)">🏗️</div>
+        <h3>מאפייני הנכס</h3>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>סוג הנכס <span class="req">*</span></label>
+            <select id="propType">
+              <option value="">בחר...</option>
+              <option>דירת מגורים</option>
+              <option>בית פרטי / קוטג׳</option>
+              <option>נכס מסחרי</option>
+              <option>משרד</option>
+              <option>מחסן / מפעל</option>
+              <option>מבנה חקלאי</option>
+              <option>אחר</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>שנת בנייה (משוערת)</label>
+            <input type="number" id="propYear" placeholder="שנת בנייה" min="1900" max="2025">
+          </div>
+          <div class="form-group">
+            <label>שטח הנכס (מ"ר)</label>
+            <input type="number" id="propArea" placeholder="מ״ר">
+          </div>
+          <div class="form-group">
+            <label>חומר הבנייה</label>
+            <select id="propMaterial">
+              <option value="">בחר...</option>
+              <option>בטון וברזל</option>
+              <option>לבנה מסורתית</option>
+              <option>עץ</option>
+              <option>פלדת מסגרת</option>
+              <option>מבנה ייחודי</option>
+              <option>אחר</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>מצב הנכס לפני האירוע</label>
+            <select id="propConditionBefore">
+              <option value="">בחר...</option>
+              <option>חדש / מצויין</option>
+              <option>טוב</option>
+              <option>סביר</option>
+              <option>ישן / דרוש שיפוץ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>שימוש בנכס</label>
+            <div class="radio-group" id="propUsage">
+              <div class="radio-btn" onclick="selectRadio(this,'propUsage')">מגורים</div>
+              <div class="radio-btn" onclick="selectRadio(this,'propUsage')">עסקי</div>
+              <div class="radio-btn" onclick="selectRadio(this,'propUsage')">מעורב</div>
+              <div class="radio-btn" onclick="selectRadio(this,'propUsage')">ריק</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 4: POLICY DETAILS ============ -->
+  <div id="step4" class="step-content hidden">
+    <div class="step-header">
+      <h2>🛡️ פרטי הפוליסה</h2>
+      <p>פרטי חברת הביטוח, הפוליסה וגבולות הכיסוי.</p>
+    </div>
+
+    <div class="card mt-4" style="margin-top:1rem">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(212,168,83,0.15)">🛡️</div>
+        <h3>פרטי פוליסת ביטוח</h3>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>חברת ביטוח</label>
+            <select id="insuranceCompany">
+              <option value="">בחר...</option>
+              <option>הפניקס</option>
+              <option>כלל ביטוח</option>
+              <option>מגדל</option>
+              <option>הראל</option>
+              <option>מנורה מבטחים</option>
+              <option>איילון</option>
+              <option>AIG</option>
+              <option>שירביט</option>
+              <option>אחר</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>מספר פוליסה</label>
+            <input type="text" id="policyNum" placeholder="מספר פוליסה">
+          </div>
+          <div class="form-group">
+            <label>מספר תביעה</label>
+            <input type="text" id="claimNum" placeholder="מספר תביעה">
+          </div>
+          <div class="form-group">
+            <label>שמאי ממונה (אם קיים)</label>
+            <input type="text" id="adjustorName" placeholder="שם השמאי">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POLICY TYPE CARD -->
+    <div class="card mt-4" style="margin-top:1rem;border-color:rgba(212,168,83,0.35)">
+      <div class="card-header" style="background:rgba(212,168,83,0.05)">
+        <div class="card-header-icon" style="background:rgba(212,168,83,0.2)">📋</div>
+        <h3>סוג פוליסה וגבולות כיסוי</h3>
+        <span class="badge badge-required">חובה</span>
+      </div>
+      <div class="card-body">
+
+        <!-- POLICY TYPE SELECTOR -->
+        <label style="margin-bottom:8px;display:block">סוג הפוליסה <span class="req">*</span></label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem" id="policyTypeGrid">
+          <div class="policy-type-card" data-type="structure_mortgage" onclick="selectPolicyType(this)">
+            <div class="pt-icon">🏦</div>
+            <div class="pt-title">מבנה – משכנתא</div>
+            <div class="pt-sub">דרך הבנק / מלווה</div>
+          </div>
+          <div class="policy-type-card" data-type="structure_only" onclick="selectPolicyType(this)">
+            <div class="pt-icon">🏗️</div>
+            <div class="pt-title">מבנה בלבד</div>
+            <div class="pt-sub">ביטוח מבנה עצמאי</div>
+          </div>
+          <div class="policy-type-card" data-type="structure_contents" onclick="selectPolicyType(this)">
+            <div class="pt-icon">🏠</div>
+            <div class="pt-title">מבנה + תכולה</div>
+            <div class="pt-sub">כיסוי מלא</div>
+          </div>
+          <div class="policy-type-card" data-type="contents_only" onclick="selectPolicyType(this)">
+            <div class="pt-icon">📦</div>
+            <div class="pt-title">תכולה בלבד</div>
+            <div class="pt-sub">ציוד ורכוש אישי</div>
+          </div>
+          <div class="policy-type-card" data-type="comprehensive" onclick="selectPolicyType(this)">
+            <div class="pt-icon">⭐</div>
+            <div class="pt-title">כל הסיכונים</div>
+            <div class="pt-sub">פוליסה מורחבת</div>
+          </div>
+          <div class="policy-type-card" data-type="other_policy" onclick="selectPolicyType(this)">
+            <div class="pt-icon">📝</div>
+            <div class="pt-title">אחר</div>
+            <div class="pt-sub">פוליסה מיוחדת</div>
+          </div>
+        </div>
+
+        <!-- POLICY ALERT - shows based on type -->
+        <div id="policyAlert" style="display:none;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:1.25rem;font-size:0.87rem;font-weight:500;display:none;align-items:center;gap:10px"></div>
+
+        <!-- STRUCTURE COVERAGE -->
+        <div id="structureCoverageSection" style="display:none">
+          <hr class="divider">
+          <p style="font-size:0.83rem;font-weight:700;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.75rem">🏗️ כיסוי מבנה</p>
+          <div class="form-grid cols-3">
+            <div class="form-group">
+              <label>גבול כיסוי מבנה (₪) <span class="req">*</span></label>
+              <input type="number" id="structureCoverageLimit" placeholder="לדוגמה: 1,500,000" oninput="calcInsuranceAdequacy()">
+            </div>
+            <div class="form-group">
+              <label>שווי מבנה להערכת שמאי (₪)</label>
+              <input type="number" id="structureAppraisedValue" placeholder="שווי שמאי" oninput="calcInsuranceAdequacy()">
+            </div>
+            <div class="form-group">
+              <label>עלות בנייה למ"ר (₪)</label>
+              <input type="number" id="buildingCostPerSqm" placeholder="לדוגמה: 12,000" oninput="calcBuildingCost()">
+            </div>
+          </div>
+          <div id="structureAdequacyBox" style="display:none;margin-top:0.75rem"></div>
+        </div>
+
+        <!-- CONTENTS COVERAGE -->
+        <div id="contentsCoverageSection" style="display:none">
+          <hr class="divider">
+          <p style="font-size:0.83rem;font-weight:700;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.75rem">📦 כיסוי תכולה</p>
+          <div class="form-grid cols-3">
+            <div class="form-group">
+              <label>גבול כיסוי תכולה (₪) <span class="req">*</span></label>
+              <input type="number" id="contentsCoverageLimit" placeholder="לדוגמה: 200,000" oninput="calcInsuranceAdequacy()">
+            </div>
+            <div class="form-group">
+              <label>שווי תכולה מוערך (₪)</label>
+              <input type="number" id="contentsAppraisedValue" placeholder="שווי מוערך" oninput="calcInsuranceAdequacy()">
+            </div>
+            <div class="form-group">
+              <label>בסיס פיצוי תכולה</label>
+              <select id="contentsCompensationBasis">
+                <option value="">בחר...</option>
+                <option value="replacement">ערך כינון (חדש תחת ישן)</option>
+                <option value="actual">ערך בפועל (בניכוי פחת)</option>
+                <option value="agreed">ערך מוסכם</option>
+              </select>
+            </div>
+          </div>
+          <div id="contentsAdequacyBox" style="display:none;margin-top:0.75rem"></div>
+        </div>
+
+        <!-- EXTENSIONS -->
+        <div id="extensionsSection" style="display:none">
+          <hr class="divider">
+          <p style="font-size:0.83rem;font-weight:700;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.75rem">🔧 הרחבות לפוליסה</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="extensionsGrid">
+            <label class="checkbox-item">
+              <input type="checkbox" value="צד ג'"><div class="cb-box">✓</div>
+              <div><span class="cb-label">צד ג'</span><span class="cb-sub">אחריות כלפי צד שלישי</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="שכ"ד חלופי"><div class="cb-box">✓</div>
+              <div><span class="cb-label">שכ"ד חלופי</span><span class="cb-sub">דמי שכירות בזמן שיקום</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="נזקי מים"><div class="cb-box">✓</div>
+              <div><span class="cb-label">הרחבת נזקי מים</span><span class="cb-sub">נזילות, הצפות, צנרת</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="פריצה וגניבה"><div class="cb-box">✓</div>
+              <div><span class="cb-label">פריצה וגניבה</span><span class="cb-sub">כלול בפוליסה</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="רעידת אדמה"><div class="cb-box">✓</div>
+              <div><span class="cb-label">רעידת אדמה</span><span class="cb-sub">הרחבה מיוחדת</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="סייבר"><div class="cb-box">✓</div>
+              <div><span class="cb-label">סייבר / גניבת זהות</span><span class="cb-sub">הגנה דיגיטלית</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="ציוד חשמלי"><div class="cb-box">✓</div>
+              <div><span class="cb-label">ציוד חשמלי ואלקטרוני</span><span class="cb-sub">מכשירים ואלקטרוניקה</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="כלי עבודה וציוד מקצועי"><div class="cb-box">✓</div>
+              <div><span class="cb-label">כלי עבודה / ציוד מקצועי</span><span class="cb-sub">לנכסים עסקיים</span></div>
+            </label>
+          </div>
+          <div class="form-group" style="margin-top:1rem">
+            <label>הרחבות נוספות (ידני)</label>
+            <input type="text" id="extraExtensions" placeholder="הרחבות שאינן ברשימה...">
+          </div>
+        </div>
+
+        <!-- DEDUCTIBLES PER POLICY -->
+        <div id="policyDeductiblesSection" style="display:none">
+          <hr class="divider">
+          <p style="font-size:0.83rem;font-weight:700;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.75rem">💳 השתתפות עצמית לפי פוליסה</p>
+          <div class="form-grid cols-3">
+            <div class="form-group">
+              <label>השתתפות עצמית מבנה (₪ / %)</label>
+              <input type="text" id="policyDeductibleStructure" placeholder="לדוגמה: 1,500 או 1%">
+            </div>
+            <div class="form-group" id="contentsDeductibleGroup">
+              <label>השתתפות עצמית תכולה (₪ / %)</label>
+              <input type="text" id="policyDeductibleContents" placeholder="לדוגמה: 500">
+            </div>
+            <div class="form-group">
+              <label>הרחבות – השתתפות עצמית</label>
+              <input type="text" id="policyDeductibleExtensions" placeholder="לדוגמה: 2,500 נזקי מים">
+            </div>
+          </div>
+        </div>
+
+        <!-- UNDERINSURANCE SUMMARY -->
+        <div id="underinsuranceSummary" style="display:none;margin-top:1rem">
+          <hr class="divider">
+          <p style="font-size:0.83rem;font-weight:700;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.75rem">⚖️ ניתוח הלימות ביטוח / תת-ביטוח</p>
+          <div id="underinsuranceContent"></div>
+          <div class="form-group" style="margin-top:1rem">
+            <label>הערות הלימות ביטוח</label>
+            <textarea id="underinsuranceNotes" placeholder="הסבר מקצועי לגבי מצב הכיסוי, תת-ביטוח, והשלכות לתביעה..."></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card mt-4" style="margin-top:1rem">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(212,168,83,0.15)">🏛️</div>
+        <h3>פרטי השמאי המדווח</h3>
+        <span class="badge" style="background:rgba(212,168,83,0.15);color:var(--accent)">🔒 קבוע</span>
+      </div>
+      <div class="card-body">
+        <div style="background:rgba(212,168,83,0.06);border:1px solid rgba(212,168,83,0.2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:0.84rem;color:var(--text-secondary)">
+          💡 פרטי השמאי ממולאים אוטומטית. מספר רישיון יעודכן בעתיד.
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>שם השמאי</label>
+            <input type="text" id="appraisalName" value="ירון אמיר" readonly style="opacity:0.7;cursor:default;background:rgba(212,168,83,0.05);border-color:rgba(212,168,83,0.3)">
+          </div>
+          <div class="form-group">
+            <label>מספר רישיון</label>
+            <input type="text" id="appraisalLicense" placeholder="יעודכן בקרוב" readonly style="opacity:0.5;cursor:default">
+          </div>
+          <div class="form-group">
+            <label>תאריך הביקור <span class="req">*</span></label>
+            <input type="date" id="visitDate">
+          </div>
+          <div class="form-group">
+            <label>שם חברת השמאות</label>
+            <input type="text" id="appraisalFirm" placeholder="חברת שמאות">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 4: DAMAGE DESCRIPTION ============ -->
+  <div id="step5" class="step-content hidden">
+    <div class="step-header">
+      <h2>📋 תיאור הנזק</h2>
+      <p>תאר בפירוט את אזורי הנכס שנפגעו ואת מהות הנזק בכל אזור.</p>
+    </div>
+
+    <!-- AREAS AFFECTED -->
+    <div class="card mb-4" style="margin-bottom:1rem">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(239,68,68,0.15)">🗺️</div>
+        <h3>אזורים שנפגעו</h3>
+        <span class="badge badge-required">סמן את כל האזורים</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="checkbox-group" id="damagedAreas">
+            <label class="checkbox-item">
+              <input type="checkbox" value="סלון / מגורים"><div class="cb-box">✓</div>
+              <div><span class="cb-label">סלון / מגורים</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="חדר שינה ראשי"><div class="cb-box">✓</div>
+              <div><span class="cb-label">חדר שינה ראשי</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="חדרי שינה נוספים"><div class="cb-box">✓</div>
+              <div><span class="cb-label">חדרי שינה נוספים</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="מטבח"><div class="cb-box">✓</div>
+              <div><span class="cb-label">מטבח</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="חדר אמבטיה"><div class="cb-box">✓</div>
+              <div><span class="cb-label">חדר אמבטיה</span></div>
+            </label>
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input type="checkbox" value="מרפסת"><div class="cb-box">✓</div>
+              <div><span class="cb-label">מרפסת</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="מחסן"><div class="cb-box">✓</div>
+              <div><span class="cb-label">מחסן</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="חניה"><div class="cb-box">✓</div>
+              <div><span class="cb-label">חניה</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="גג / עליית גג"><div class="cb-box">✓</div>
+              <div><span class="cb-label">גג / עליית גג</span></div>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="כל הנכס"><div class="cb-box">✓</div>
+              <div><span class="cb-label">כל הנכס</span></div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAMAGE TYPE DETAILS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(245,158,11,0.15)">🔍</div>
+        <h3>סוגי נזק</h3>
+      </div>
+      <div class="card-body">
+        <div class="checkbox-group">
+          <label class="checkbox-item">
+            <input type="checkbox" value="נזק מבני"><div class="cb-box">✓</div>
+            <div><span class="cb-label">נזק מבני</span><span class="cb-sub">קירות, עמודים, גג, תקרה, יסודות</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="נזק לריצוף ואריחים"><div class="cb-box">✓</div>
+            <div><span class="cb-label">נזק לריצוף ואריחים</span><span class="cb-sub">שבירה, הרמה, כתמים</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="נזק לחיפויי קיר"><div class="cb-box">✓</div>
+            <div><span class="cb-label">נזק לחיפויי קיר</span><span class="cb-sub">טיח, צבע, טפטים, פאנלים</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="נזק לנגרייה וצירופים"><div class="cb-box">✓</div>
+            <div><span class="cb-label">נזק לנגרייה וצירופים</span><span class="cb-sub">דלתות, חלונות, ארונות</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="נזק למערכות חשמל"><div class="cb-box">✓</div>
+            <div><span class="cb-label">נזק למערכות חשמל</span><span class="cb-sub">לוח חשמל, כבלים, שקעים</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="נזק לאינסטלציה"><div class="cb-box">✓</div>
+            <div><span class="cb-label">נזק לאינסטלציה</span><span class="cb-sub">צנרת, ברזים, ביוב</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="נזק לתכולה ורהיטים"><div class="cb-box">✓</div>
+            <div><span class="cb-label">נזק לתכולה ורהיטים</span><span class="cb-sub">רהיטים, מכשירי חשמל, ציוד</span></div>
+          </label>
+        </div>
+
+        <div class="form-group mt-4" style="margin-top:1rem">
+          <label>תיאור הנזק המפורט</label>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:8px">
+            <span>📝 נוסח פתיחה אוטומטי — ניתן לערוך</span>
+            <button type="button" onclick="refreshDamageTemplate()" style="background:rgba(212,168,83,0.15);border:1px solid rgba(212,168,83,0.3);color:var(--accent);border-radius:99px;padding:2px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit">↺ רענן</button>
+          </div>
+          <textarea id="damageDescription" style="min-height:130px"></textarea>
+        </div>
+
+        <div class="form-grid mt-4" style="margin-top:1rem">
+          <div class="form-group">
+            <label>חומרת הנזק הכוללת</label>
+            <div class="radio-group" id="damageSeverity">
+              <div class="radio-btn" onclick="selectRadio(this,'damageSeverity')">קל</div>
+              <div class="radio-btn" onclick="selectRadio(this,'damageSeverity')">בינוני</div>
+              <div class="radio-btn" onclick="selectRadio(this,'damageSeverity')">חמור</div>
+              <div class="radio-btn" onclick="selectRadio(this,'damageSeverity')">הרסני</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>האם הנכס ניתן לדיור / שימוש</label>
+            <div class="radio-group" id="propUsable">
+              <div class="radio-btn" onclick="selectRadio(this,'propUsable')">כן</div>
+              <div class="radio-btn" onclick="selectRadio(this,'propUsable')">חלקית</div>
+              <div class="radio-btn" onclick="selectRadio(this,'propUsable')">לא</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 5: BILL OF QUANTITIES ============ -->
+  <div id="step6" class="step-content hidden">
+    <div class="step-header">
+      <h2>📋 כתב כמויות ותמחור</h2>
+      <p>בחר סעיפי עבודה, הגדר כמויות ועדכן מחירים לפי הצעות שהתקבלו.</p>
+    </div>
+
+    <!-- SMART SUGGESTION BAR -->
+    <div id="boqSuggestionBar" style="background:rgba(212,168,83,0.07);border:1px solid rgba(212,168,83,0.25);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem;display:none">
+      <div style="font-size:0.82rem;font-weight:700;color:var(--accent);margin-bottom:0.6rem;display:flex;align-items:center;gap:8px">
+        💡 סעיפים מומלצים לפי סוג הנזק שסומן
+        <button onclick="applyAllSuggested()" class="btn btn-primary" style="padding:4px 14px;font-size:0.78rem">+ הוסף הכל</button>
+      </div>
+      <div id="boqSuggestionTags" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+
+    <!-- SECTIONS CONTAINER -->
+    <div id="boqSections"></div>
+
+    <!-- ADD SECTION BUTTON -->
+    <button class="btn btn-ghost" style="width:100%;justify-content:center;border-style:dashed;margin-top:0.5rem" onclick="addBoqSection()">
+      + הוסף פרק חדש
+    </button>
+
+    <!-- SUMMARY -->
+    <div class="card" style="margin-top:1.5rem;border-color:rgba(212,168,83,0.4)">
+      <div class="card-header" style="background:rgba(212,168,83,0.05)">
+        <div class="card-header-icon" style="background:rgba(212,168,83,0.2)">💰</div>
+        <h3>סיכום כתב כמויות</h3>
+      </div>
+      <div class="card-body">
+        <div id="boqSummaryRows" style="margin-bottom:1rem"></div>
+
+        <hr class="divider">
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>השתתפות עצמית (₪)</label>
+            <input type="number" id="deductible" placeholder="0" oninput="updateBoqTotal()">
+          </div>
+          <div class="form-group">
+            <label>ירידת ערך (₪)</label>
+            <input type="number" id="depreciation" placeholder="0" oninput="updateBoqTotal()">
+          </div>
+          <div class="form-group">
+            <label>הוצאות אחרות (₪)</label>
+            <input type="number" id="extraCosts" placeholder="0" oninput="updateBoqTotal()">
+          </div>
+          <div class="form-group">
+            <label>מע"מ</label>
+            <div class="radio-group" id="vatCalc">
+              <div class="radio-btn active" onclick="selectRadio(this,'vatCalc');updateBoqTotal()">כולל מע"מ (18%)</div>
+              <div class="radio-btn" onclick="selectRadio(this,'vatCalc');updateBoqTotal()">ללא מע"מ</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="conclusion-box" style="margin-top:1rem">
+          <h3>💎 סיכום הערכת נזק</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+            <div>
+              <p class="text-sm text-muted">סה"כ לפני מע"מ</p>
+              <div class="amount-display" id="totalBeforeVat">₪0</div>
+            </div>
+            <div>
+              <p class="text-sm text-muted">סה"כ נזק (כולל מע"מ)</p>
+              <div class="amount-display" id="totalGross">₪0</div>
+            </div>
+            <div>
+              <p class="text-sm text-muted">סכום לתשלום מוצע</p>
+              <div class="amount-display" id="totalNet" style="color:var(--success)">₪0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mt-4" style="margin-top:1rem">
+          <label>הערות לסכום</label>
+          <textarea id="amountNotes" placeholder="הסברים, הגבלות, הנחות שנלקחו בחשבון..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- RENTAL COMPENSATION - shows when property is uninhabitable -->
+    <div class="card mt-4" id="rentalCompCard" style="margin-top:1rem;border-color:rgba(59,130,246,0.4);display:none">
+      <div class="card-header" style="background:rgba(59,130,246,0.05)">
+        <div class="card-header-icon" style="background:rgba(59,130,246,0.2)">🏘️</div>
+        <h3>פיצוי עבור שכירות חלופית</h3>
+        <span class="badge" style="background:rgba(59,130,246,0.15);color:#3b82f6">מופעל אוטומטית – נכס לא ראוי למגורים</span>
+      </div>
+      <div class="card-body">
+        <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:0.84rem;color:#93c5fd">
+          ℹ️ סעיף זה הופעל כיוון שסומן שהנכס אינו ראוי למגורים. הזן את פרטי דמי השכירות החלופיים.
+        </div>
+        <div class="form-grid cols-3">
+          <div class="form-group">
+            <label>שכר דירה חודשי משוער (₪)</label>
+            <input type="number" id="rentalMonthly" placeholder="לדוגמה: 4500" oninput="updateRentalTotal()">
+          </div>
+          <div class="form-group">
+            <label>מספר חודשים משוערים</label>
+            <input type="number" id="rentalMonths" placeholder="לדוגמה: 3" min="0" step="0.5" oninput="updateRentalTotal()">
+          </div>
+          <div class="form-group">
+            <label>סה"כ פיצוי שכירות (₪)</label>
+            <input type="number" id="rentalTotal" placeholder="חישוב אוטומטי" readonly style="opacity:0.7;background:rgba(59,130,246,0.05);border-color:rgba(59,130,246,0.3)">
+          </div>
+        </div>
+        <div class="form-grid" style="margin-top:1rem">
+          <div class="form-group">
+            <label>בסיס ההערכה</label>
+            <select id="rentalBasis">
+              <option value="">בחר...</option>
+              <option>שכר דירה ממוצע באזור</option>
+              <option>חוזה שכירות קיים</option>
+              <option>הערכת שמאי</option>
+              <option>הצעת מחיר מאפיין</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>האם כבר שולם פיצוי ביניים</label>
+            <div class="radio-group" id="rentalPaidAlready">
+              <div class="radio-btn" onclick="selectRadio(this,'rentalPaidAlready')">כן</div>
+              <div class="radio-btn" onclick="selectRadio(this,'rentalPaidAlready')">לא</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:1rem">
+          <label>הערות לפיצוי השכירות</label>
+          <textarea id="rentalNotes" placeholder="פרטים נוספים לגבי הפיצוי המוצע..."></textarea>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ STEP 6: PHOTOS ============ -->
+  <div id="step7" class="step-content hidden">
+    <div class="step-header">
+      <h2>📸 תמונות ומסמכים</h2>
+      <p>צרף תמונות של הנזק ומסמכים רלוונטיים.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(59,130,246,0.15)">📷</div>
+        <h3>תמונות הנזק</h3>
+        <span class="badge badge-optional">אופציונלי</span>
+      </div>
+      <div class="card-body">
+        <div class="upload-zone" onclick="document.getElementById('photoInput').click()">
+          <div class="up-icon">📂</div>
+          <p><strong>לחץ לבחירת תמונות</strong> או גרור לכאן</p>
+          <p style="margin-top:4px;font-size:0.78rem">JPG, PNG, WEBP - עד 10 MB לקובץ</p>
+        </div>
+        <input type="file" id="photoInput" multiple accept="image/*" class="hidden" onchange="handlePhotos(this)">
+        <div class="photo-grid" id="photoGrid"></div>
+      </div>
+    </div>
+
+    <div class="card mt-4" style="margin-top:1rem">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(212,168,83,0.15)">📄</div>
+        <h3>מסמכים ואסמכתאות</h3>
+      </div>
+      <div class="card-body">
+        <div class="checkbox-group">
+          <label class="checkbox-item">
+            <input type="checkbox"><div class="cb-box">✓</div>
+            <div><span class="cb-label">העתק פוליסת ביטוח</span><span class="cb-sub">צורף / יצורף</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox"><div class="cb-box">✓</div>
+            <div><span class="cb-label">תיק משטרה / אישור</span><span class="cb-sub">לאירועי פריצה / גניבה</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox"><div class="cb-box">✓</div>
+            <div><span class="cb-label">אישור מכבי אש</span><span class="cb-sub">לאירועי שריפה</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox"><div class="cb-box">✓</div>
+            <div><span class="cb-label">חשבוניות תיקון ראשוני</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox"><div class="cb-box">✓</div>
+            <div><span class="cb-label">הצעות מחיר שהתקבלו</span></div>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox"><div class="cb-box">✓</div>
+            <div><span class="cb-label">נסח טאבו / בעלות</span></div>
+          </label>
+        </div>
+        <div class="form-group mt-4" style="margin-top:1rem">
+          <label>מסמכים נוספים שצורפו</label>
+          <textarea id="additionalDocs" placeholder="רשום מסמכים נוספים..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 7: CONCLUSIONS ============ -->
+  <div id="step8" class="step-content hidden">
+    <div class="step-header">
+      <h2>⚖️ מסקנות ושיקולים</h2>
+      <p>הוסף מסקנות מקצועיות, המלצות ושיקולים לדוח.</p>
+    </div>
+
+    <div class="section open" id="sec-responsibility">
+      <div class="section-trigger" onclick="toggleSection(this)">
+        <div class="section-number">1</div>
+        <h3>קביעת אחריות וכיסוי</h3>
+        <span class="section-arrow">▼</span>
+      </div>
+      <div class="section-content">
+        <hr class="section-divider">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>קביעת סיבת הנזק</label>
+            <textarea id="causeConclusion" placeholder="קביעה מקצועית לגבי הסיבה הישירה לנזק..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>נסיבות מחמירות / מקלות</label>
+            <textarea id="circumstances" placeholder="גורמים נוספים שהשפיעו על היקף הנזק..."></textarea>
+          </div>
+        </div>
+        <div class="form-group mt-4" style="margin-top:1rem">
+          <label>האם הנזק מכוסה בפוליסה</label>
+          <div class="radio-group" id="coverageDecision">
+            <div class="radio-btn" onclick="selectRadio(this,'coverageDecision')">כן, מכוסה במלואו</div>
+            <div class="radio-btn" onclick="selectRadio(this,'coverageDecision')">מכוסה חלקית</div>
+            <div class="radio-btn" onclick="selectRadio(this,'coverageDecision')">אינו מכוסה</div>
+            <div class="radio-btn" onclick="selectRadio(this,'coverageDecision')">ממתין לבדיקה</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-recommendations">
+      <div class="section-trigger" onclick="toggleSection(this)">
+        <div class="section-number">2</div>
+        <h3>המלצות לשיקום</h3>
+        <span class="section-arrow">▼</span>
+      </div>
+      <div class="section-content">
+        <hr class="section-divider">
+        <div class="form-group">
+          <label>סדר עדיפויות לתיקון</label>
+          <textarea id="repairPriority" style="min-height:100px" placeholder="תאר את סדר העדיפויות המוצע לשיקום הנכס..."></textarea>
+        </div>
+        <div class="form-group mt-4" style="margin-top:1rem">
+          <label>זמן שיקום משוער</label>
+          <div class="radio-group" id="repairTime">
+            <div class="radio-btn" onclick="selectRadio(this,'repairTime')">עד שבוע</div>
+            <div class="radio-btn" onclick="selectRadio(this,'repairTime')">2-4 שבועות</div>
+            <div class="radio-btn" onclick="selectRadio(this,'repairTime')">1-3 חודשים</div>
+            <div class="radio-btn" onclick="selectRadio(this,'repairTime')">מעל 3 חודשים</div>
+          </div>
+        </div>
+        <div class="form-group mt-4" style="margin-top:1rem">
+          <label>האם נדרש מומחה נוסף</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input type="checkbox"><div class="cb-box">✓</div>
+              <span class="cb-label">מהנדס קונסטרוקציה</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox"><div class="cb-box">✓</div>
+              <span class="cb-label">חוקר שריפות</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox"><div class="cb-box">✓</div>
+              <span class="cb-label">מהנדס חשמל</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox"><div class="cb-box">✓</div>
+              <span class="cb-label">אינסטלטור / הידרולוג</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-notes">
+      <div class="section-trigger" onclick="toggleSection(this)">
+        <div class="section-number">3</div>
+        <h3>פרק 5 – הסברים להערכה</h3>
+        <span class="section-arrow">▼</span>
+      </div>
+      <div class="section-content">
+        <hr class="section-divider">
+
+        <div style="background:rgba(212,168,83,0.06);border:1px solid rgba(212,168,83,0.2);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:1rem;font-size:0.84rem;color:var(--text-secondary);line-height:1.7">
+          📌 <strong style="color:var(--accent)">נוסח ברירת מחדל לפרק ההסברים</strong> — ניתן לערוך / להוסיף / להשמיט שורות
+        </div>
+
+        <div class="form-group">
+          <label>פרק 5 – הסברים להערכה</label>
+          <textarea id="evaluationExplanation" style="min-height:220px;line-height:1.8;font-size:0.88rem">הערכת הנזק נקבעה בהתאם לממצאים שנצפו במועד הביקור בנכס ובהתאם ל"דוח / הערכה / טופס תלונה".
+מדובר בדירת מגורים, ולפיכך ההערכה כוללת מע"מ.
+המחירים מבוססים על הצעות מחיר שהתקבלו ועל מחירון דקל שיפוצים בהתאם למקובל בשוק.
+כל האמור בדו"ח זה נכון ליום הביקור בנכס.
+ייתכן כי במהלך ביצוע העבודות יתגלו ליקויים נוספים שלא היו גלויים לעין במועד הבדיקה, ובמקרה זה תעודכן ההערכה בהתאם.</textarea>
+        </div>
+
+        <div class="form-group mt-4" style="margin-top:1.25rem">
+          <label>הערות כלליות ו/או הסתייגויות נוספות</label>
+          <textarea id="generalNotes" style="min-height:100px" placeholder="הערות שמאיות נוספות, הסתייגויות, מידע חסר שיש להשלים..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECLARATION SECTION -->
+    <div class="section open" id="sec-declaration" style="margin-top:1rem">
+      <div class="section-trigger" onclick="toggleSection(this)">
+        <div class="section-number">4</div>
+        <h3>הצהרת שמאי</h3>
+        <span class="badge" style="background:rgba(212,168,83,0.15);color:var(--accent);font-size:0.7rem;padding:3px 10px;border-radius:99px;font-weight:600">קבוע • ניתן לעריכה</span>
+        <span class="section-arrow">▼</span>
+      </div>
+      <div class="section-content">
+        <hr class="section-divider">
+        <div style="background:rgba(212,168,83,0.06);border:1px solid rgba(212,168,83,0.2);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:1rem;font-size:0.84rem;color:var(--text-secondary);line-height:1.7">
+          🔒 נוסח ההצהרה קבוע ומקצועי — ניתן לערוך לפי הצורך.
+        </div>
+        <div class="form-group">
+          <textarea id="appraisalDeclaration" style="min-height:120px;line-height:1.8;font-size:0.88rem"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 8: PREVIEW ============ -->
+  <div id="step9" class="step-content hidden">
+    <div class="step-header">
+      <h2>👁️ תצוגה מקדימה של הדוח</h2>
+      <p>בדוק את הדוח לפני ייצוא ושליחה.</p>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap">
+      <button class="btn btn-success btn-lg" onclick="printReport()">🖨️ הדפסה / שמירה כ-PDF</button>
+      <button class="btn btn-primary btn-lg" onclick="openEmailModal()">📧 שליחה במייל</button>
+      <button class="btn btn-ghost" onclick="goToStep(1)">✏️ ערוך מחדש</button>
+    </div>
+    <div class="report-preview" id="reportOutput"></div>
+  </div>
+
+  <!-- EMAIL MODAL -->
+  <div id="emailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;max-width:480px;width:90%;position:relative;box-shadow:var(--shadow-lg)">
+      <button onclick="closeEmailModal()" style="position:absolute;top:12px;left:16px;background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer">✕</button>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem">
+        <div style="background:rgba(212,168,83,0.15);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:1.3rem">📧</div>
+        <div>
+          <h3 style="margin:0;font-size:1.05rem">שליחת חוות הדעת במייל</h3>
+          <p style="margin:0;font-size:0.82rem;color:var(--text-muted)">הדוח יישלח כקובץ HTML לכתובת שתבחר</p>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem">
+        <label>כתובת מייל של המבוטח</label>
+        <input type="email" id="emailInsured" placeholder="insured@example.com" style="direction:ltr">
+      </div>
+      <div class="form-group" style="margin-bottom:1rem">
+        <label>כתובת מייל נוספת (CC – חברת ביטוח / שמאי ממונה)</label>
+        <input type="email" id="emailCC" placeholder="company@insurance.co.il" style="direction:ltr">
+      </div>
+      <div class="form-group" style="margin-bottom:1.25rem">
+        <label>נושא המייל</label>
+        <input type="text" id="emailSubject" value="חוות דעת שמאי רכוש – ירון אמיר">
+      </div>
+      <div class="form-group" style="margin-bottom:1.5rem">
+        <label>הודעה נלווית (אופציונלי)</label>
+        <textarea id="emailBody" style="min-height:80px" placeholder="לכבוד...&#10;מצורפת חוות הדעת השמאית בגין..."></textarea>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" style="flex:1" onclick="sendByEmail()">📤 שלח מייל</button>
+        <button class="btn btn-ghost" onclick="downloadHtmlReport()">💾 הורד כקובץ</button>
+      </div>
+      <p style="margin-top:1rem;font-size:0.77rem;color:var(--text-muted);text-align:center">
+        * השליחה מתבצעת דרך תוכנת המייל המוגדרת במחשב שלך (mailto).<br>
+        לשליחה ישירה מהמערכת, ניתן להשתמש ב"הורד כקובץ" ולצרפו ידנית.
+      </p>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div style="display:flex;justify-content:space-between;margin-top:2rem">
+    <button class="btn btn-ghost" id="prevBtn" onclick="goToStep(currentStep-1)">← הקודם</button>
+    <button class="btn btn-primary btn-lg" id="nextBtn" onclick="goToStep(currentStep+1)">המשך →</button>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ====== APPRAISER PROFILE (defaults) ======
+const APPRAISER = {
+  name: 'ירון אמיר',
+  role: 'שמאי רכוש',
+  phone: '050-329-2066',
+  email: 'yaronamir86@gmail.com'
+};
+
+let currentStep = 1;
+const totalSteps = 9;
+let selectedEvent = null;
+let photos = [];
+
+// ====== AUTO-FILL FROM INSURED (step 1 → step 2 eventBrief) ======
+function autoFillFromInsured() {
+  const name    = document.getElementById('insuredName')?.value?.trim() || '___________';
+  const id      = document.getElementById('insuredId')?.value?.trim()   || '___________';
+  const evDate  = document.getElementById('eventDate')?.value;
+  const dateStr = evDate ? new Date(evDate).toLocaleDateString('he-IL') : '___________';
+
+  const ta = document.getElementById('eventBrief');
+  if (!ta) return;
+
+  const tpl = `מן הפרטים אותם קיבלנו מפי המבוטח מר ${name}, ת.ז ${id}. עולה כי בתאריך ${dateStr}.`;
+  // Only auto-fill if field is empty or contains the previous template
+  if (!ta.value || ta.value.startsWith('מן הפרטים אותם קיבלנו')) {
+    ta.value = tpl;
+  }
+}
+
+// ====== INIT ======
+window.onload = () => {
+  updateNav();
+  initCheckboxes();
+  refreshDamageTemplate();
+  refreshDeclaration();
+};
+
+// ====== CHECKBOX SYSTEM – FIXED ======
+// ====== CHECKBOX SYSTEM – CLEAN ======
+// The issue: <label> wrapping <input> causes double-fire (label click + input change).
+// Solution: remove reliance on native checkbox change, handle everything via click on .checkbox-item.
+function initCheckboxes() {
+  document.addEventListener('click', function(e) {
+    const item = e.target.closest('.checkbox-item');
+    if (!item) return;
+    // Prevent the label from also triggering the hidden input and causing double-toggle
+    e.preventDefault();
+    e.stopPropagation();
+    const cb = item.querySelector('input[type="checkbox"]');
+    if (cb) {
+      cb.checked = !cb.checked;
+    }
+    item.classList.toggle('checked');
+  }, true); // use capture phase so we catch it before label's default behavior
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const cb = el.querySelector('input[type="checkbox"]');
+  if (cb) cb.checked = el.classList.contains('checked');
+}
+
+// ====== DAMAGE TEMPLATE ======
+function refreshDamageTemplate() {
+  const name = document.getElementById('insuredName')?.value?.trim() || '___________';
+  const id = document.getElementById('insuredId')?.value?.trim() || '___________';
+  const eventDate = document.getElementById('eventDate')?.value;
+  const dateStr = eventDate ? new Date(eventDate).toLocaleDateString('he-IL') : '___________';
+  
+  const ta = document.getElementById('damageDescription');
+  if (!ta) return;
+  const current = ta.value;
+  const prefix = `מן הפרטים אותם קיבלנו מפי המבוטח מר ${name}, ת.ז ${id}. עולה כי בתאריך ${dateStr}.\n\n`;
+  
+  const wasEmpty = current === '' || current.startsWith('מן הפרטים אותם קיבלנו');
+  if (wasEmpty) {
+    ta.value = prefix;
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+    ta.focus();
+  }
+}
+
+// ====== DECLARATION TEMPLATE ======
+function refreshDeclaration() {
+  const text = `אני הח"מ מצהיר כי חוות דעת זו נערכה על ידי באופן מקצועי, עצמאי ובלתי תלוי, בהתאם לממצאים שנצפו בביקור בנכס ולנתונים שעמדו בפניי במועד עריכת הדו"ח.
+ההערכה בוצעה בהתאם לכללים המקובלים בתחום שמאות הרכוש ועל בסיס ניסיון מקצועי ומקורות תמחור מקובלים.
+חוות דעת זו מיועדת להערכת הנזק נשוא האירוע בלבד.`;
+
+  const ta = document.getElementById('appraisalDeclaration');
+  if (ta) ta.value = text;
+}
+
+// ====== PROPUSABLE TRIGGER for rental ======
+function checkRentalVisibility() {
+  const active = document.querySelector('#propUsable .radio-btn.active');
+  const card = document.getElementById('rentalCompCard');
+  if (!card) return;
+  if (active && active.textContent.trim() === 'לא') {
+    card.style.display = 'block';
+    card.scrollIntoView({behavior:'smooth', block:'nearest'});
+  } else {
+    card.style.display = 'none';
+  }
+}
+
+// ====== RENTAL TOTAL ======
+function updateRentalTotal() {
+  const monthly = parseFloat(document.getElementById('rentalMonthly')?.value) || 0;
+  const months = parseFloat(document.getElementById('rentalMonths')?.value) || 0;
+  const total = monthly * months;
+  const el = document.getElementById('rentalTotal');
+  if (el) el.value = total > 0 ? total : '';
+}
+
+// ====== NAVIGATION ======
+function goToStep(n) {
+  if (n < 1 || n > totalSteps) return;
+  if (n === totalSteps) buildReport();
+  // Auto-fill eventBrief when moving to step 2 (event type)
+  if (n === 2) {
+    const ta = document.getElementById('eventBrief');
+    if (!ta?.value || ta.value.startsWith('מן הפרטים')) autoFillFromInsured();
+  }
+  // Auto-fill damage description when moving to step 5
+  if (n === 5) {
+    const ta = document.getElementById('damageDescription');
+    if (ta && (!ta.value || ta.value.startsWith('מן הפרטים'))) refreshDamageTemplate();
+  }
+  // Init BOQ when moving to step 6
+  if (n === 6) {
+    initBoq();
+  }
+  // Auto-fill declaration when moving to step 8
+  if (n === 8) {
+    const ta = document.getElementById('appraisalDeclaration');
+    if (!ta?.value || ta.value.startsWith('הצהרת שמאי')) refreshDeclaration();
+  }
+
+  document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
+  document.getElementById('step' + n).classList.remove('hidden');
+
+  document.querySelectorAll('.step-pill').forEach(pill => {
+    const s = parseInt(pill.dataset.step);
+    pill.classList.remove('active','done');
+    if (s === n) pill.classList.add('active');
+    else if (s < n) pill.classList.add('done');
+  });
+
+  const pct = Math.round((n / totalSteps) * 100);
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progLabel').textContent = 'שלב ' + n + ' מתוך ' + totalSteps;
+
+  currentStep = n;
+  updateNav();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function updateNav() {
+  const prev = document.getElementById('prevBtn');
+  const next = document.getElementById('nextBtn');
+  const hNext = document.getElementById('headerNextBtn');
+  prev.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+  if (currentStep === totalSteps) {
+    next.textContent = '✅ סיום';
+    next.onclick = () => showToast('✅ הדוח מוכן להדפסה!', 'success');
+    hNext.textContent = '✅ סיום';
+  } else if (currentStep === totalSteps - 1) {
+    next.textContent = '👁️ הצג דוח →';
+    hNext.textContent = '👁️ הצג דוח →';
+    next.onclick = () => goToStep(currentStep + 1);
+    hNext.onclick = () => goToStep(currentStep + 1);
+  } else {
+    next.textContent = 'המשך →';
+    hNext.textContent = 'המשך →';
+    next.onclick = () => goToStep(currentStep + 1);
+    hNext.onclick = () => goToStep(currentStep + 1);
+  }
+}
+
+// ====== EVENT SELECTION ======
+function selectEvent(type, el) {
+  document.querySelectorAll('.event-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedEvent = type;
+
+  document.getElementById('eventTypeDetails').classList.remove('hidden');
+  document.querySelectorAll('.event-specific').forEach(s => s.classList.add('hidden'));
+
+  const spec = document.getElementById(type + 'Specific');
+  if (spec) spec.classList.remove('hidden');
+
+  const icons = {fire:'🔥',water:'💧',break_in:'🔓',earthquake:'🌍',other:'📋'};
+  const titles = {fire:'פרטי אירוע השריפה',water:'פרטי נזקי המים',break_in:'פרטי אירוע הפריצה',earthquake:'פרטי רעידת האדמה',other:'פרטי האירוע'};
+  document.getElementById('evDetailIcon').textContent = icons[type];
+  document.getElementById('evDetailTitle').textContent = titles[type];
+}
+
+// ====== RADIO BUTTONS ======
+function selectRadio(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .radio-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  // Check if this is the propUsable group to show/hide rental card
+  if (groupId === 'propUsable') checkRentalVisibility();
+}
+
+// ====== SECTION TOGGLE ======
+function toggleSection(trigger) {
+  const section = trigger.closest('.section');
+  section.classList.toggle('open');
+}
+
+// ====== BOQ ENGINE – BILL OF QUANTITIES ======
+
+// Full catalog of work items organized by damage type and section
+const BOQ_CATALOG = {
+
+  // ─── SECTIONS TRIGGERED BY DAMAGE TYPE ────────────────────────────────────
+  'נזק לריצוף ואריחים': [
+    {
+      title: 'עבודות פירוק והכנה',
+      items: [
+        { desc: 'פירוק ריצוף קיים',             unit: 'מ"ר',    qty: 0, price: 85   },
+        { desc: 'פינוי פסולת לאתר מורשה',        unit: "קומפ'",  qty: 1, price: 1800 },
+        { desc: 'ניקוי וחיטוי תשתית',            unit: 'מ"ר',    qty: 0, price: 65   },
+      ]
+    },
+    {
+      title: 'עבודות תשתית וריצוף',
+      items: [
+        { desc: 'הכנת ויישור תשתית',             unit: 'מ"ר',    qty: 0, price: 55   },
+        { desc: 'ריצוף חדש כולל רובה',            unit: 'מ"ר',    qty: 0, price: 260  },
+        { desc: 'פסי חיבור ופינות',              unit: "יח'",    qty: 0, price: 120  },
+      ]
+    }
+  ],
+
+  'נזק לחיפויי קיר': [
+    {
+      title: 'עבודות טיח, שפכטל וצבע',
+      items: [
+        { desc: 'קילוף אזורים פגועים',           unit: 'מ"ר',    qty: 0, price: 25   },
+        { desc: 'תיקוני טיח',                    unit: 'מ"ר',    qty: 0, price: 75   },
+        { desc: 'שפכטל מלא',                     unit: 'מ"ר',    qty: 0, price: 65   },
+        { desc: 'פריימר אוטם',                   unit: 'מ"ר',    qty: 0, price: 18   },
+        { desc: 'צבע אקרילי – 2 שכבות',          unit: 'מ"ר',    qty: 0, price: 42   },
+      ]
+    }
+  ],
+
+  'נזק לאינסטלציה': [
+    {
+      title: 'עבודות אינסטלציה',
+      items: [
+        { desc: 'פירוק צנרת פגומה',              unit: "קומפ'",  qty: 1, price: 750  },
+        { desc: 'אספקה והתקנת צנרת חדשה',        unit: "קומפ'",  qty: 1, price: 1900 },
+        { desc: 'בדיקת אטימות',                  unit: "קומפ'",  qty: 1, price: 400  },
+        { desc: 'סגירת קיר/ריצוף ותיקוני גמר',   unit: "קומפ'",  qty: 1, price: 1200 },
+      ]
+    }
+  ],
+
+  'נזק לנגרייה וצירופים': [
+    {
+      title: 'עבודות נגרות ומסגרות',
+      items: [
+        { desc: 'פירוק דלתות / חלונות קיימים',  unit: "יח'",    qty: 0, price: 450  },
+        { desc: 'אספקה והתקנת דלת חדשה',        unit: "יח'",    qty: 0, price: 2800 },
+        { desc: 'אספקה והתקנת משקוף',            unit: "יח'",    qty: 0, price: 1450 },
+        { desc: 'תיקוני טיח וצבע היקפי',        unit: "יח'",    qty: 0, price: 300  },
+        { desc: 'החלפת ידיות ואביזרים',          unit: "יח'",    qty: 0, price: 180  },
+      ]
+    }
+  ],
+
+  'נזק למערכות חשמל': [
+    {
+      title: 'עבודות חשמל',
+      items: [
+        { desc: 'בדיקת מערכת חשמל',             unit: "קומפ'",  qty: 1, price: 600  },
+        { desc: 'החלפת לוח חשמל',               unit: "קומפ'",  qty: 1, price: 3500 },
+        { desc: 'החלפת כבלים שנפגעו',            unit: 'מ"ר',    qty: 0, price: 85   },
+        { desc: 'החלפת שקעים ומפסקים',           unit: "יח'",    qty: 0, price: 120  },
+        { desc: 'בדיקת תקינות ואישור חשמלאי',   unit: "קומפ'",  qty: 1, price: 450  },
+      ]
+    }
+  ],
+
+  'נזק מבני': [
+    {
+      title: 'עבודות מבנה ושיקום קונסטרוקציה',
+      items: [
+        { desc: 'חיזוק סדקים קונסטרוקטיביים',   unit: 'מ"ר',    qty: 0, price: 350  },
+        { desc: 'ציפוי ואיטום קירות',            unit: 'מ"ר',    qty: 0, price: 180  },
+        { desc: 'שיקום תקרה / קמרון',            unit: 'מ"ר',    qty: 0, price: 420  },
+        { desc: 'עבודות פיגום',                  unit: "קומפ'",  qty: 1, price: 2200 },
+      ]
+    }
+  ],
+
+  'נזק לתכולה ורהיטים': [
+    {
+      title: 'נזקי תכולה',
+      items: [
+        { desc: 'ניקוי / שחזור ריהוט',          unit: "יח'",    qty: 0, price: 600  },
+        { desc: 'פינוי ריהוט פגום',              unit: "קומפ'",  qty: 1, price: 800  },
+        { desc: 'ניקוי מקצועי שטיחים/רצפות',    unit: 'מ"ר',    qty: 0, price: 45   },
+      ]
+    }
+  ],
+
+  // Shared section appended to ALL
+  '_general': {
+    title: 'עבודות ניקוי, פינוי ופיקוח',
+    items: [
+      { desc: 'ניקוי אתר בסיום עבודות',         unit: "קומפ'",  qty: 1, price: 900  },
+      { desc: 'פיקוח הנדסי (5% מסכום העבודות)', unit: '%',      qty: 5, price: 0, isPct: true },
+    ]
+  }
+};
+
+// All available single items for adding manually to any section
+const BOQ_ALL_ITEMS = [
+  // פירוק
+  { desc: 'פירוק ריצוף קיים',             unit: 'מ"ר',    price: 85   },
+  { desc: 'פירוק אריחי קיר',              unit: 'מ"ר',    price: 75   },
+  { desc: 'פינוי פסולת לאתר מורשה',        unit: "קומפ'",  price: 1800 },
+  { desc: 'ניקוי וחיטוי תשתית',            unit: 'מ"ר',    price: 65   },
+  { desc: 'פירוק דלתות / חלונות קיימים',  unit: "יח'",    price: 450  },
+  { desc: 'פירוק ארונות קיימים',           unit: "יח'",    price: 380  },
+  { desc: 'פירוק צנרת פגומה',              unit: "קומפ'",  price: 750  },
+  { desc: 'פירוק גבס / פאנלים',            unit: 'מ"ר',    price: 45   },
+  // תשתית
+  { desc: 'החלפת מצע מזוהם',               unit: 'מ"ר',    price: 120  },
+  { desc: 'הכנת ויישור תשתית',             unit: 'מ"ר',    price: 55   },
+  { desc: 'יציקת מרצפת בטון',              unit: 'מ"ר',    price: 145  },
+  // ריצוף
+  { desc: 'ריצוף חדש כולל רובה',            unit: 'מ"ר',    price: 260  },
+  { desc: 'ריצוף פרקט למינציה',            unit: 'מ"ר',    price: 220  },
+  { desc: 'אריחי קיר – אספקה והנחה',       unit: 'מ"ר',    price: 320  },
+  { desc: 'פסי חיבור ופינות',              unit: "יח'",    price: 120  },
+  // טיח וצבע
+  { desc: 'קילוף אזורים פגועים',           unit: 'מ"ר',    price: 25   },
+  { desc: 'תיקוני טיח',                    unit: 'מ"ר',    price: 75   },
+  { desc: 'טיח צמנטי מלא',                 unit: 'מ"ר',    price: 110  },
+  { desc: 'שפכטל מלא',                     unit: 'מ"ר',    price: 65   },
+  { desc: 'פריימר אוטם',                   unit: 'מ"ר',    price: 18   },
+  { desc: 'צבע אקרילי – 2 שכבות',          unit: 'מ"ר',    price: 42   },
+  { desc: 'צבע עמיד לחות',                 unit: 'מ"ר',    price: 58   },
+  { desc: 'טיפול בעובש',                   unit: 'מ"ר',    price: 95   },
+  // אינסטלציה
+  { desc: 'אספקה והתקנת צנרת חדשה',        unit: "קומפ'",  price: 1900 },
+  { desc: 'החלפת סיפון / ניקוז',           unit: "יח'",    price: 550  },
+  { desc: 'בדיקת אטימות',                  unit: "קומפ'",  price: 400  },
+  { desc: 'סגירת קיר/ריצוף ותיקוני גמר',   unit: "קומפ'",  price: 1200 },
+  { desc: 'החלפת ברזים ואביזרים',          unit: "יח'",    price: 280  },
+  // נגרות
+  { desc: 'אספקה והתקנת דלת חדשה',        unit: "יח'",    price: 2800 },
+  { desc: 'אספקה והתקנת משקוף',            unit: "יח'",    price: 1450 },
+  { desc: 'תיקוני טיח וצבע היקפי',        unit: "יח'",    price: 300  },
+  { desc: 'אספקה והתקנת חלון חדש',         unit: "יח'",    price: 2200 },
+  { desc: 'החלפת ידיות ואביזרים',          unit: "יח'",    price: 180  },
+  { desc: 'החלפת ארון מטבח',               unit: 'מ"ר',    price: 1800 },
+  // חשמל
+  { desc: 'בדיקת מערכת חשמל',             unit: "קומפ'",  price: 600  },
+  { desc: 'החלפת לוח חשמל',               unit: "קומפ'",  price: 3500 },
+  { desc: 'החלפת כבלים שנפגעו',            unit: 'מ"ר',    price: 85   },
+  { desc: 'החלפת שקעים ומפסקים',           unit: "יח'",    price: 120  },
+  { desc: 'בדיקת תקינות ואישור חשמלאי',   unit: "קומפ'",  price: 450  },
+  // מבנה
+  { desc: 'חיזוק סדקים קונסטרוקטיביים',   unit: 'מ"ר',    price: 350  },
+  { desc: 'ציפוי ואיטום קירות',            unit: 'מ"ר',    price: 180  },
+  { desc: 'שיקום תקרה / קמרון',            unit: 'מ"ר',    price: 420  },
+  { desc: 'עבודות פיגום',                  unit: "קומפ'",  price: 2200 },
+  // כללי
+  { desc: 'ניקוי אתר בסיום עבודות',         unit: "קומפ'",  price: 900  },
+  { desc: 'פיקוח הנדסי (5% מסה"כ עבודות)',   unit: '%',      price: 0, isPct: true  },
+  { desc: 'פריט מותאם אישית',               unit: "יח'",    price: 0    },
+];
+
+// ─── BOQ STATE ─────────────────────────────────────────────────────────────
+let boqSections = []; // [{id, title, rows:[{desc,unit,qty,price}]}]
+let boqSectionCounter = 0;
+
+// ─── INIT BOQ from damage types selected in step 4 ─────────────────────────
+function initBoq() {
+  // Read checked damage types from step 4
+  const checkedTypes = Array.from(
+    document.querySelectorAll('#step5 .checkbox-item.checked .cb-label')
+  ).map(el => el.textContent.trim());
+
+  // Show suggestion bar
+  const bar = document.getElementById('boqSuggestionBar');
+  const tagsEl = document.getElementById('boqSuggestionTags');
+  const suggestedSections = [];
+
+  checkedTypes.forEach(type => {
+    const sections = BOQ_CATALOG[type];
+    if (sections) sections.forEach(s => suggestedSections.push({...s, fromType: type}));
+  });
+  // Always suggest general at end
+  suggestedSections.push({...BOQ_CATALOG['_general'], fromType: 'כללי'});
+
+  if (suggestedSections.length > 1) {
+    bar.style.display = 'block';
+    tagsEl.innerHTML = '';
+    suggestedSections.forEach((sec, i) => {
+      const tag = document.createElement('span');
+      tag.className = 'boq-suggestion-tag';
+      tag.dataset.idx = i;
+      tag.innerHTML = `<span>+</span> ${sec.title}`;
+      tag.onclick = () => {
+        if (tag.classList.contains('added')) return;
+        addBoqSectionFromTemplate(sec);
+        tag.classList.add('added');
+        tag.innerHTML = `✓ ${sec.title}`;
+      };
+      tagsEl.appendChild(tag);
+    });
+    // Store for apply-all
+    window._boqSuggested = suggestedSections;
+  }
+
+  // If no sections yet, auto-add suggested ones
+  if (boqSections.length === 0 && suggestedSections.length > 0) {
+    suggestedSections.forEach(s => addBoqSectionFromTemplate(s));
+    // Mark all tags as added
+    document.querySelectorAll('.boq-suggestion-tag').forEach(t => {
+      t.classList.add('added');
+      t.innerHTML = '✓ ' + t.innerHTML.replace('<span>+</span> ','');
+    });
+  }
+}
+
+function applyAllSuggested() {
+  const sug = window._boqSuggested || [];
+  const existingTitles = boqSections.map(s => s.title);
+  sug.forEach(s => {
+    if (!existingTitles.includes(s.title)) addBoqSectionFromTemplate(s);
+  });
+  document.querySelectorAll('.boq-suggestion-tag').forEach(t => {
+    t.classList.add('added');
+    t.innerHTML = '✓ ' + t.textContent.replace('+ ','').replace('✓ ','');
+  });
+}
+
+// ─── ADD SECTION ────────────────────────────────────────────────────────────
+function addBoqSectionFromTemplate(template) {
+  const id = ++boqSectionCounter;
+  const section = {
+    id,
+    title: template.title || `סעיף ${id}`,
+    rows: (template.items || []).map((item, i) => ({
+      id: `${id}_${i}`,
+      desc: item.desc,
+      unit: item.unit,
+      qty: item.qty || 0,
+      price: item.price || 0
+    }))
+  };
+  boqSections.push(section);
+  renderBoq();
+}
+
+function addBoqSection() {
+  const id = ++boqSectionCounter;
+  boqSections.push({ id, title: `סעיף חדש ${id}`, rows: [] });
+  renderBoq();
+  // Focus on the new section title
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.boq-section-title');
+    const last = inputs[inputs.length - 1];
+    if (last) { last.focus(); last.select(); }
+  }, 100);
+}
+
+function removeBoqSection(id) {
+  boqSections = boqSections.filter(s => s.id !== id);
+  renderBoq();
+}
+
+// ─── ADD ROW ────────────────────────────────────────────────────────────────
+function addBoqRow(sectionId, itemData) {
+  const sec = boqSections.find(s => s.id === sectionId);
+  if (!sec) return;
+  const rowId = `${sectionId}_${Date.now()}`;
+  sec.rows.push({
+    id: rowId,
+    desc: itemData?.desc || '',
+    unit: itemData?.unit || "יח'",
+    qty: itemData?.qty || 0,
+    price: itemData?.price || 0
+  });
+  renderBoq();
+  // Reset the add-row select
+  const sel = document.getElementById(`addrow_${sectionId}`);
+  if (sel) sel.value = '';
+}
+
+function removeBoqRow(sectionId, rowId) {
+  const sec = boqSections.find(s => s.id === sectionId);
+  if (!sec) return;
+  sec.rows = sec.rows.filter(r => r.id !== rowId);
+  renderBoq();
+}
+
+// ─── SYNC FROM DOM ──────────────────────────────────────────────────────────
+function syncBoqFromDom() {
+  boqSections.forEach(sec => {
+    const titleEl = document.getElementById(`boq_title_${sec.id}`);
+    if (titleEl) sec.title = titleEl.value;
+    sec.rows.forEach(row => {
+      const desc  = document.getElementById(`boq_desc_${row.id}`);
+      const unit  = document.getElementById(`boq_unit_${row.id}`);
+      const qty   = document.getElementById(`boq_qty_${row.id}`);
+      const price = document.getElementById(`boq_price_${row.id}`);
+      if (desc)  row.desc  = desc.value;
+      if (unit)  row.unit  = unit.value;
+      if (qty)   row.qty   = parseFloat(qty.value) || 0;
+      if (price) row.price = parseFloat(price.value) || 0;
+    });
+  });
+}
+
+// ─── RENDER ─────────────────────────────────────────────────────────────────
+function renderBoq() {
+  syncBoqFromDom();
+  const container = document.getElementById('boqSections');
+  if (!container) return;
+
+  container.innerHTML = boqSections.map((sec, si) => {
+    const secTotal = sec.rows.reduce((s, r) => s + (r.qty * r.price), 0);
+    const rowsHtml = sec.rows.map((row, ri) => {
+      const rowTotal = (row.qty * row.price).toLocaleString('he-IL');
+      const subNum = `${si + 1}.${ri + 1}`;
+      const isPct = row.isPct;
+      const qtyReadOnly  = isPct ? 'readonly style="opacity:0.6;text-align:center"' : 'min="0" step="0.1"';
+      const priceReadOnly = isPct ? 'readonly style="opacity:0.6;text-align:left" placeholder="חישוב אוטומטי"' : 'min="0"';
+      return `<tr ${isPct ? 'style="background:rgba(212,168,83,0.04)"' : ''}>
+        <td class="num-col">${subNum}</td>
+        <td><input type="text" id="boq_desc_${row.id}" value="${esc(row.desc)}" placeholder="תיאור עבודה" oninput="updateBoqTotal()" ${isPct ? 'readonly style="opacity:0.7"' : ''}></td>
+        <td><input type="text" id="boq_unit_${row.id}" value="${esc(row.unit)}" style="text-align:center" ${isPct ? 'readonly style="opacity:0.6;text-align:center"' : ''} oninput="updateBoqTotal()"></td>
+        <td><input type="number" id="boq_qty_${row.id}" value="${row.qty || ''}" placeholder="${isPct ? '%' : '0'}" ${qtyReadOnly} oninput="updateBoqTotal()"></td>
+        <td><input type="number" id="boq_price_${row.id}" value="${row.price || ''}" placeholder="₪" ${priceReadOnly} oninput="updateBoqTotal()"></td>
+        <td class="total-cell" id="boq_total_${row.id}">₪0</td>
+        <td><button class="del-row" onclick="removeBoqRow(${sec.id},'${row.id}')" title="מחק שורה">✕</button></td>
+      </tr>`;
+    }).join('');
+
+    // Build add-row dropdown
+    const itemOpts = BOQ_ALL_ITEMS.map((item, i) =>
+      `<option value="${i}">${item.desc}</option>`
+    ).join('');
+
+    return `
+    <div class="boq-section" id="boq_sec_${sec.id}">
+      <div class="boq-section-header">
+        <div class="boq-section-num">${si + 1}</div>
+        <input class="boq-section-title" id="boq_title_${sec.id}" value="${esc(sec.title)}" placeholder="שם הפרק...">
+        <span class="boq-section-total">₪${secTotal.toLocaleString('he-IL')}</span>
+        <button class="boq-delete-section" onclick="removeBoqSection(${sec.id})" title="מחק פרק">🗑</button>
+      </div>
+      <table class="boq-table">
+        <thead>
+          <tr>
+            <th class="num-col">סעיף</th>
+            <th>תיאור עבודה</th>
+            <th class="unit-col">יח'</th>
+            <th class="qty-col">כמות</th>
+            <th class="price-col">מחיר יח'</th>
+            <th class="total-col">סה"כ (₪)</th>
+            <th class="act-col"></th>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+      <div class="boq-add-row">
+        <select id="addrow_${sec.id}" onchange="onAddRowSelect(${sec.id},this)">
+          <option value="">+ בחר עבודה להוספה...</option>
+          ${itemOpts}
+          <option value="custom">✏️ שורה ריקה (מותאם אישית)</option>
+        </select>
+      </div>
+    </div>`;
+  }).join('');
+
+  updateBoqTotal();
+}
+
+function onAddRowSelect(secId, sel) {
+  const val = sel.value;
+  if (!val) return;
+  if (val === 'custom') {
+    addBoqRow(secId, { desc: '', unit: "יח'", qty: 0, price: 0 });
+  } else {
+    const item = BOQ_ALL_ITEMS[parseInt(val)];
+    if (item) addBoqRow(secId, { ...item, qty: 0 });
+  }
+}
+
+function esc(str) {
+  return String(str||'').replace(/"/g, '&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── TOTALS ──────────────────────────────────────────────────────────────────
+function updateBoqTotal() {
+  syncBoqFromDom();
+
+  // First pass: subtotal of non-pct rows (for calculating 5% supervision)
+  let grandSubtotal = 0;
+  boqSections.forEach(sec => {
+    sec.rows.forEach(row => {
+      if (row.isPct) return;
+      const qty   = parseFloat(document.getElementById(`boq_qty_${row.id}`)?.value   || row.qty   || 0);
+      const price = parseFloat(document.getElementById(`boq_price_${row.id}`)?.value || row.price || 0);
+      grandSubtotal += qty * price;
+    });
+  });
+
+  // Second pass: update pct rows & section totals & row cells
+  boqSections.forEach(sec => {
+    let secTotal = 0;
+    sec.rows.forEach((row, idx) => {
+      const qty   = parseFloat(document.getElementById(`boq_qty_${row.id}`)?.value || row.qty || 0);
+      let price   = parseFloat(document.getElementById(`boq_price_${row.id}`)?.value || row.price || 0);
+      let rowTotal;
+      if (row.isPct) {
+        price = Math.round(grandSubtotal * (qty / 100));
+        const pel = document.getElementById(`boq_price_${row.id}`);
+        if (pel) { pel.value = price; pel.readOnly = true; pel.style.opacity='0.6'; }
+        rowTotal = price;
+      } else {
+        rowTotal = qty * price;
+      }
+      secTotal += rowTotal;
+      const cells = document.querySelectorAll(`#boq_sec_${sec.id} tbody tr`);
+      if (cells[idx]) {
+        const tc = cells[idx].querySelector('.total-cell');
+        if (tc) tc.textContent = '₪' + rowTotal.toLocaleString('he-IL');
+      }
+    });
+    const totEl = document.querySelector(`#boq_sec_${sec.id} .boq-section-total`);
+    if (totEl) totEl.textContent = '₪' + secTotal.toLocaleString('he-IL');
+  });
+
+  // Grand total
+  let grandTotal = 0;
+  boqSections.forEach(sec => {
+    sec.rows.forEach(row => {
+      const qty   = parseFloat(document.getElementById(`boq_qty_${row.id}`)?.value   || row.qty   || 0);
+      const price = parseFloat(document.getElementById(`boq_price_${row.id}`)?.value || row.price || 0);
+      grandTotal += row.isPct ? price : qty * price;
+    });
+  });
+
+  const vatActive = document.querySelector('#vatCalc .radio-btn.active')?.textContent?.includes('18%') ||
+                    document.querySelector('#vatCalc .radio-btn.active')?.textContent?.includes('כולל');
+  const withVat = vatActive ? grandTotal * 1.18 : grandTotal;
+
+  const deductible  = parseFloat(document.getElementById('deductible')?.value)   || 0;
+  const depreciation= parseFloat(document.getElementById('depreciation')?.value) || 0;
+  const extra       = parseFloat(document.getElementById('extraCosts')?.value)    || 0;
+  const rental      = parseFloat(document.getElementById('rentalTotal')?.value)   || 0;
+  const net         = Math.max(0, withVat - deductible - depreciation + extra + rental);
+
+  const fmtN = n => '₪' + Math.round(n).toLocaleString('he-IL');
+
+  // Summary rows
+  const summaryEl = document.getElementById('boqSummaryRows');
+  if (summaryEl) {
+    let html = '';
+    boqSections.forEach(sec => {
+      const secTotal = sec.rows.reduce((s, r) => {
+        const qty   = parseFloat(document.getElementById(`boq_qty_${r.id}`)?.value   || r.qty   || 0);
+        const price = parseFloat(document.getElementById(`boq_price_${r.id}`)?.value || r.price || 0);
+        return s + qty * price;
+      }, 0);
+      if (secTotal > 0) {
+        html += `<div class="boq-sum-row"><span class="sr-label">${sec.title}</span><span class="sr-amount">${fmtN(secTotal)}</span></div>`;
+      }
+    });
+    html += `<div class="boq-sum-row grand"><span class="sr-label">סה"כ לפני מע"מ</span><span class="sr-amount">${fmtN(grandTotal)}</span></div>`;
+    if (vatActive) html += `<div class="boq-sum-row"><span class="sr-label">מע"מ 18%</span><span class="sr-amount">${fmtN(grandTotal * 0.18)}</span></div>`;
+    summaryEl.innerHTML = html;
+  }
+
+  const bv = document.getElementById('totalBeforeVat');
+  const tg = document.getElementById('totalGross');
+  const tn = document.getElementById('totalNet');
+  if (bv) bv.textContent = fmtN(grandTotal);
+  if (tg) tg.textContent = fmtN(withVat);
+  if (tn) tn.textContent = fmtN(net);
+
+  // Also update legacy damageTotal if it exists
+  const dt = document.getElementById('damageTotal');
+  if (dt) dt.innerHTML = `סה"כ הנזק המוערך: <span>${fmtN(withVat)}</span>`;
+}
+
+// ─── GET BOQ DATA FOR REPORT ─────────────────────────────────────────────────
+function getBoqData() {
+  syncBoqFromDom();
+  return boqSections.map((sec, si) => {
+    const rows = sec.rows.map((row, ri) => {
+      const qty   = parseFloat(document.getElementById(`boq_qty_${row.id}`)?.value   || row.qty   || 0);
+      const price = parseFloat(document.getElementById(`boq_price_${row.id}`)?.value || row.price || 0);
+      return { ...row, qty, price, total: qty * price, subNum: `${si+1}.${ri+1}` };
+    });
+    const secTotal = rows.reduce((s, r) => s + r.total, 0);
+    return { ...sec, rows, secTotal, sectionNum: si + 1 };
+  });
+}
+
+// ====== POLICY TYPE ======
+let selectedPolicyType = null;
+
+const POLICY_CONFIG = {
+  structure_mortgage: {
+    label: 'מבנה דרך משכנתא',
+    structure: true,
+    contents: false,
+    alert: { type: 'warning', msg: '⚠️ פוליסת משכנתא — <strong>אין כיסוי לתכולה.</strong> פריטי תכולה יסומנו כ"לא מכוסה" ולא יכללו בסכום התביעה.' }
+  },
+  structure_only: {
+    label: 'מבנה בלבד',
+    structure: true,
+    contents: false,
+    alert: { type: 'info', msg: 'ℹ️ פוליסת מבנה בלבד — נזקי תכולה <strong>אינם מכוסים</strong> בפוליסה זו.' }
+  },
+  structure_contents: {
+    label: 'מבנה + תכולה',
+    structure: true,
+    contents: true,
+    alert: { type: 'success', msg: '✅ פוליסה מלאה — כיסוי מבנה ותכולה פעיל.' }
+  },
+  contents_only: {
+    label: 'תכולה בלבד',
+    structure: false,
+    contents: true,
+    alert: { type: 'info', msg: 'ℹ️ פוליסת תכולה בלבד — נזקי מבנה <strong>אינם מכוסים</strong> בפוליסה זו.' }
+  },
+  comprehensive: {
+    label: 'כל הסיכונים',
+    structure: true,
+    contents: true,
+    alert: { type: 'success', msg: '✅ פוליסת כל הסיכונים — כיסוי מקיף למבנה, תכולה והרחבות.' }
+  },
+  other_policy: {
+    label: 'פוליסה אחרת',
+    structure: true,
+    contents: true,
+    alert: { type: 'info', msg: 'ℹ️ בדוק את פרטי הפוליסה הספציפית לקביעת גבולות הכיסוי.' }
+  }
+};
+
+function selectPolicyType(el) {
+  document.querySelectorAll('.policy-type-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedPolicyType = el.dataset.type;
+  const cfg = POLICY_CONFIG[selectedPolicyType];
+
+  // Show/hide alert
+  const alertEl = document.getElementById('policyAlert');
+  if (cfg.alert) {
+    alertEl.style.display = 'flex';
+    const colors = {
+      warning: { bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', color: '#d97706' },
+      info:    { bg: 'rgba(59,130,246,0.08)', border: 'rgba(59,130,246,0.25)', color: '#3b82f6' },
+      success: { bg: 'rgba(34,197,94,0.08)', border: 'rgba(34,197,94,0.25)', color: '#22c55e' }
+    };
+    const c = colors[cfg.alert.type] || colors.info;
+    alertEl.style.cssText = `display:flex;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:1.25rem;font-size:0.87rem;font-weight:500;align-items:center;gap:10px;background:${c.bg};border:1px solid ${c.border};color:${c.color}`;
+    alertEl.innerHTML = cfg.alert.msg;
+  }
+
+  // Show/hide coverage sections
+  document.getElementById('structureCoverageSection').style.display = cfg.structure ? 'block' : 'none';
+  document.getElementById('contentsCoverageSection').style.display = cfg.contents ? 'block' : 'none';
+  document.getElementById('extensionsSection').style.display = 'block';
+  document.getElementById('policyDeductiblesSection').style.display = 'block';
+  document.getElementById('contentsDeductibleGroup').style.display = cfg.contents ? 'block' : 'none';
+
+  // Update damage table category options
+  updateDamageCategories();
+  calcInsuranceAdequacy();
+  updateTotal();
+}
+
+// ====== DAMAGE ITEMS ======
+function addDamageItem(desc='', qty='', price='', cat='') {
+  const container = document.getElementById('damageItems');
+  if (!container) return; // element no longer exists in BOQ-based step 5
+  const div = document.createElement('div');
+  div.className = 'damage-item';
+
+  const catOptions = buildCategoryOptions(cat);
+  div.innerHTML = `
+    <input type="text" placeholder="תיאור נזק / עבודה" value="${desc}" oninput="updateTotal()">
+    <input type="text" placeholder="כמות / שטח" value="${qty}">
+    <select class="dmg-category" onchange="updateTotal()" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 10px;color:var(--text-primary);font-family:inherit;font-size:0.85rem;width:100%">${catOptions}</select>
+    <input type="number" placeholder="0" min="0" value="${price}" oninput="updateTotal()" style="min-width:90px">
+    <button class="remove-btn" onclick="removeDamageItem(this)" title="הסר">✕</button>
+  `;
+  container.appendChild(div);
+
+  // Update header
+  const header = document.getElementById('damageTableHeader');
+  if (header) header.style.gridTemplateColumns = '2fr 1fr 1fr 1fr auto';
+
+  updateTotal();
+}
+
+function buildCategoryOptions(selected='') {
+  const cfg = selectedPolicyType ? POLICY_CONFIG[selectedPolicyType] : null;
+
+  const opts = [
+    { value: 'structure', label: '🏗️ מבנה', covered: cfg ? cfg.structure : true },
+    { value: 'contents',  label: '📦 תכולה', covered: cfg ? cfg.contents : true },
+    { value: 'both',      label: '🔀 מבנה + תכולה', covered: true },
+  ];
+
+  return opts.map(o => {
+    const suffix = o.covered ? '' : ' ⛔ לא מכוסה';
+    return `<option value="${o.value}" ${selected === o.value ? 'selected' : ''}>${o.label}${suffix}</option>`;
+  }).join('');
+}
+
+function updateDamageCategories() {
+  document.querySelectorAll('.dmg-category').forEach(sel => {
+    const current = sel.value;
+    sel.innerHTML = buildCategoryOptions(current);
+  });
+}
+
+function removeDamageItem(btn) {
+  btn.closest('.damage-item').remove();
+  updateTotal();
+}
+
+function updateTotal() {
+  const cfg = selectedPolicyType ? POLICY_CONFIG[selectedPolicyType] : null;
+  let coveredGross = 0;
+  let uncoveredGross = 0;
+
+  document.querySelectorAll('.damage-item').forEach(row => {
+    const price = parseFloat(row.querySelector('input[type="number"]')?.value) || 0;
+    const cat = row.querySelector('.dmg-category')?.value || 'structure';
+
+    let isCovered = true;
+    if (cfg) {
+      if (cat === 'structure') isCovered = cfg.structure;
+      else if (cat === 'contents') isCovered = cfg.contents;
+      else if (cat === 'both') isCovered = cfg.structure || cfg.contents;
+    }
+
+    // Visual feedback on row
+    row.style.borderColor = isCovered ? 'var(--border)' : 'rgba(239,68,68,0.3)';
+    row.style.opacity = isCovered ? '1' : '0.65';
+
+    if (isCovered) coveredGross += price;
+    else uncoveredGross += price;
+  });
+
+  const deductible = parseFloat(document.getElementById('deductible')?.value) || 0;
+  const depreciation = parseFloat(document.getElementById('depreciation')?.value) || 0;
+  const extra = parseFloat(document.getElementById('extraCosts')?.value) || 0;
+  const rental = parseFloat(document.getElementById('rentalTotal')?.value) || 0;
+
+  const vatActive = document.querySelector('#vatCalc .radio-btn.active')?.textContent === 'כלול';
+  const coveredWithVat = vatActive ? coveredGross * 1.18 : coveredGross;
+  const uncoveredWithVat = vatActive ? uncoveredGross * 1.18 : uncoveredGross;
+  const totalWithVat = coveredWithVat + uncoveredWithVat;
+  const net = coveredWithVat - deductible - depreciation + extra + rental;
+
+  const fmtN = n => '₪' + Math.max(0, Math.round(n)).toLocaleString('he-IL');
+
+  const totalEl = document.getElementById('damageTotal');
+  if (totalEl) {
+    if (cfg && !cfg.contents && !cfg.structure) {
+      totalEl.innerHTML = `סה"כ נזק מוערך: <span>${fmtN(totalWithVat)}</span>`;
+    } else if (cfg && uncoveredGross > 0) {
+      totalEl.innerHTML = `סה"כ נזק: <span>${fmtN(totalWithVat)}</span> &nbsp;|&nbsp; <span style="color:#22c55e">מכוסה: ${fmtN(coveredWithVat)}</span> &nbsp;|&nbsp; <span style="color:#ef4444">לא מכוסה: ${fmtN(uncoveredWithVat)}</span>`;
+    } else {
+      totalEl.innerHTML = `סה"כ הנזק המוערך: <span>${fmtN(totalWithVat)}</span>`;
+    }
+  }
+
+  const tg = document.getElementById('totalGross');
+  const tn = document.getElementById('totalNet');
+  if (tg) tg.textContent = fmtN(coveredWithVat);
+  if (tn) tn.textContent = fmtN(Math.max(0, net));
+
+  // Update summary labels
+  const sgLabel = document.querySelector('#totalGross')?.previousElementSibling;
+  if (sgLabel) sgLabel.textContent = cfg && uncoveredGross > 0 ? 'סה"כ נזק מכוסה' : 'סה"כ נזק גולמי';
+}
+
+// ====== INSURANCE ADEQUACY ======
+function calcBuildingCost() {
+  const sqm = parseFloat(document.getElementById('propArea')?.value) || 0;
+  const costPerSqm = parseFloat(document.getElementById('buildingCostPerSqm')?.value) || 0;
+  if (sqm && costPerSqm) {
+    const calc = sqm * costPerSqm;
+    const appraised = document.getElementById('structureAppraisedValue');
+    if (appraised && !appraised.value) appraised.value = Math.round(calc);
+    calcInsuranceAdequacy();
+  }
+}
+
+function calcInsuranceAdequacy() {
+  const cfg = selectedPolicyType ? POLICY_CONFIG[selectedPolicyType] : null;
+  if (!cfg) return;
+
+  const fmtN = n => '₪' + Math.round(n).toLocaleString('he-IL');
+  const pct  = (a, b) => b > 0 ? Math.round((a / b) * 100) : 0;
+  let showSummary = false;
+
+  // ── STRUCTURE COVERAGE ──────────────────────────────────────────────────
+  if (cfg.structure) {
+    const limit     = parseFloat(document.getElementById('structureCoverageLimit')?.value)    || 0;
+    const appraised = parseFloat(document.getElementById('structureAppraisedValue')?.value)   || 0;
+    const structBox = document.getElementById('structureAdequacyBox');
+
+    if (limit > 0 && appraised > 0) {
+      showSummary = true;
+      const ratio = pct(limit, appraised);
+      const isMortgage = selectedPolicyType === 'structure_mortgage';
+
+      let statusClass = ratio >= 100 ? 'success' : ratio >= 80 ? 'warning' : 'danger';
+      let statusLabel, ruleHtml = '';
+
+      if (isMortgage) {
+        // ── MORTGAGE: no underinsurance rule. Just max coverage gap.
+        if (ratio >= 100) {
+          statusLabel = '✅ כיסוי מלא';
+        } else {
+          statusLabel = '⚠️ חוסר כיסוי';
+          ruleHtml = `<div class="underins-rule">
+            <strong>🏦 ביטוח מבנה – כיסוי מקסימלי</strong>
+            גבול הכיסוי הוא <strong>${fmtN(limit)}</strong>. אם הנזק עולה על סכום זה — החלק העודף <span style="color:var(--danger)">אינו מכוסה</span>.
+            חוסר כיסוי: <span style="color:var(--danger)">${fmtN(appraised - limit)}</span> &nbsp;(הפרש בין השווי לגבול הפוליסה)
+          </div>`;
+        }
+      } else {
+        // ── OTHER POLICIES: underinsurance Coinsurance Rule
+        // Formula: insurer pays = (limit / appraised) × damage
+        // Example: limit=100, appraised=200, damage=200 → pays = (100/200)×200 = 100 → but capped at limit
+        // Example: limit=100, appraised=200, damage=100 → pays = (100/200)×100 = 50
+        if (ratio >= 100) {
+          statusLabel = '✅ כיסוי מלא';
+        } else {
+          statusLabel = '❌ תת-ביטוח';
+          const exampleDamage = Math.round(appraised * 0.3); // 30% damage example
+          const paidByInsurer = Math.round((limit / appraised) * exampleDamage);
+          ruleHtml = `<div class="underins-rule">
+            <strong>⚖️ כלל תת-הביטוח – הנוסחה</strong>
+            שיעור כיסוי: <strong>${ratio}%</strong> &nbsp;(גבול ÷ שווי אמיתי)<br>
+            הביטוח ישלם: <strong>(גבול כיסוי ÷ שווי אמיתי) × סכום הנזק</strong><br>
+            <span style="font-size:0.8rem;color:var(--text-muted)">דוגמה: נזק של ${fmtN(exampleDamage)} — הביטוח ישלם <strong>${fmtN(paidByInsurer)}</strong> (${ratio}% מהנזק)</span><br>
+            <span style="font-size:0.8rem;color:var(--text-muted)">נזק של ${fmtN(limit)} — הביטוח ישלם <strong>${fmtN(Math.round((limit/appraised)*limit))}</strong> ולא ${fmtN(limit)}</span><br>
+            חוסר כיסוי: <span style="color:var(--danger)">${fmtN(appraised - limit)}</span>
+          </div>`;
+        }
+      }
+
+      structBox.style.display = 'block';
+      structBox.innerHTML = `
+        <div class="adequacy-box" style="margin-bottom:8px">
+          <div class="adequacy-item">
+            <div class="ai-label">גבול כיסוי</div>
+            <div class="ai-value">${fmtN(limit)}</div>
+          </div>
+          <div class="adequacy-item">
+            <div class="ai-label">שווי ${isMortgage ? 'נכס' : 'שמאי'}</div>
+            <div class="ai-value">${fmtN(appraised)}</div>
+          </div>
+          <div class="adequacy-item ${statusClass}">
+            <div class="ai-label">שיעור כיסוי</div>
+            <div class="ai-value">${ratio}% — ${statusLabel}</div>
+          </div>
+        </div>
+        ${ruleHtml}`;
+    } else {
+      if (structBox) structBox.style.display = 'none';
+    }
+  }
+
+  // ── CONTENTS COVERAGE ───────────────────────────────────────────────────
+  if (cfg.contents) {
+    const limit     = parseFloat(document.getElementById('contentsCoverageLimit')?.value)    || 0;
+    const appraised = parseFloat(document.getElementById('contentsAppraisedValue')?.value)   || 0;
+    const contBox   = document.getElementById('contentsAdequacyBox');
+
+    if (limit > 0 && appraised > 0) {
+      showSummary = true;
+      const ratio = pct(limit, appraised);
+      let statusClass = ratio >= 100 ? 'success' : ratio >= 80 ? 'warning' : 'danger';
+      let statusLabel = ratio >= 100 ? '✅ כיסוי מלא' : '❌ תת-ביטוח';
+
+      let ruleHtml = '';
+      if (ratio < 100) {
+        const exDmg = Math.round(appraised * 0.5);
+        const exPaid = Math.round((limit / appraised) * exDmg);
+        ruleHtml = `<div class="underins-rule" style="margin-top:8px">
+          <strong>⚖️ תת-ביטוח בתכולה</strong>
+          הביטוח ישלם: <strong>(${fmtN(limit)} ÷ ${fmtN(appraised)}) × נזק</strong><br>
+          <span style="font-size:0.8rem;color:var(--text-muted)">דוגמה: נזק ${fmtN(exDmg)} → ישולם ${fmtN(exPaid)} (${ratio}%)</span><br>
+          חוסר: <span style="color:var(--danger)">${fmtN(appraised - limit)}</span>
+        </div>`;
+      }
+
+      contBox.style.display = 'block';
+      contBox.innerHTML = `
+        <div class="adequacy-box">
+          <div class="adequacy-item"><div class="ai-label">גבול כיסוי תכולה</div><div class="ai-value">${fmtN(limit)}</div></div>
+          <div class="adequacy-item"><div class="ai-label">שווי תכולה</div><div class="ai-value">${fmtN(appraised)}</div></div>
+          <div class="adequacy-item ${statusClass}"><div class="ai-label">שיעור כיסוי</div><div class="ai-value">${ratio}% — ${statusLabel}</div></div>
+        </div>${ruleHtml}`;
+    } else {
+      if (contBox) contBox.style.display = 'none';
+    }
+  }
+
+  document.getElementById('underinsuranceSummary').style.display = showSummary ? 'block' : 'none';
+}
+
+// ====== PHOTOS ======
+function handlePhotos(input) {
+  const files = Array.from(input.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      photos.push({src: e.target.result, name: file.name, caption: ''});
+      renderPhotos();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPhotos() {
+  const grid = document.getElementById('photoGrid');
+  grid.innerHTML = '';
+  photos.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'photo-thumb';
+    div.innerHTML = `
+      <img src="${p.src}" alt="${p.name}">
+      <button class="rm-photo" onclick="removePhoto(${i})">✕</button>
+      <input class="caption-input" placeholder="תיאור..." value="${p.caption}"
+        oninput="photos[${i}].caption=this.value">
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function removePhoto(i) {
+  photos.splice(i, 1);
+  renderPhotos();
+}
+
+// ====== HELPERS ======
+function getRadioValue(groupId) {
+  const el = document.querySelector(`#${groupId} .radio-btn.active`);
+  return el ? el.textContent.trim() : '';
+}
+
+function getCheckedLabels(groupId) {
+  const items = document.querySelectorAll(`#${groupId} .checkbox-item.checked .cb-label`);
+  return Array.from(items).map(i => i.textContent.trim()).filter(Boolean);
+}
+
+function getCheckedLabelsAll(selector) {
+  const items = document.querySelectorAll(selector + ' .checkbox-item.checked .cb-label');
+  return Array.from(items).map(i => i.textContent.trim()).filter(Boolean);
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? (el.value || '').trim() : '';
+}
+
+function fmt(n) {
+  return '₪' + Math.round(parseFloat(n) || 0).toLocaleString('he-IL');
+}
+
+function calcTotal() {
+  let gross = 0;
+  document.querySelectorAll('.damage-item input[type="number"]').forEach(inp => {
+    gross += parseFloat(inp.value) || 0;
+  });
+  const vatActive = document.querySelector('#vatCalc .radio-btn.active')?.textContent === 'כלול';
+  return vatActive ? gross * 1.18 : gross;
+}
+
+function getDamageRows() {
+  const rows = [];
+  const cfg = selectedPolicyType ? POLICY_CONFIG[selectedPolicyType] : null;
+  document.querySelectorAll('.damage-item').forEach(row => {
+    const inputs = row.querySelectorAll('input[type="text"], input[type="number"]');
+    const desc = row.querySelector('input[type="text"]')?.value.trim();
+    const qty = row.querySelectorAll('input[type="text"]')[1]?.value.trim();
+    const cat = row.querySelector('.dmg-category')?.value || 'structure';
+    const price = parseFloat(row.querySelector('input[type="number"]')?.value) || 0;
+
+    let isCovered = true;
+    if (cfg) {
+      if (cat === 'structure') isCovered = cfg.structure;
+      else if (cat === 'contents') isCovered = cfg.contents;
+    }
+
+    const catLabel = { structure: 'מבנה', contents: 'תכולה', both: 'מבנה + תכולה' }[cat] || cat;
+    if (desc) rows.push({ desc, qty, cat, catLabel, price, isCovered });
+  });
+  return rows;
+}
+
+// ====== BUILD REPORT ======
+function buildReport() {
+  const evLabels = {fire:'שריפה',water:'נזקי מים',break_in:'פריצה',earthquake:'רעידת אדמה',other:'אחר'};
+  const evIcons = {fire:'🔥',water:'💧',break_in:'🔓',earthquake:'🌍',other:'📋'};
+
+  const rows = getDamageRows();
+  const cfg = selectedPolicyType ? POLICY_CONFIG[selectedPolicyType] : null;
+
+  const vatActive = document.querySelector('#vatCalc .radio-btn.active')?.textContent === 'כלול';
+  const mult = vatActive ? 1.18 : 1;
+
+  let coveredGross = 0, uncoveredGross = 0;
+  rows.forEach(r => { r.isCovered ? coveredGross += r.price : uncoveredGross += r.price; });
+  const coveredWithVat = coveredGross * mult;
+  const uncoveredWithVat = uncoveredGross * mult;
+  const gross = coveredWithVat;
+
+  const deductible = parseFloat(val('deductible')) || 0;
+  const depreciation = parseFloat(val('depreciation')) || 0;
+  const extra = parseFloat(val('extraCosts')) || 0;
+  const rental = parseFloat(val('rentalTotal')) || 0;
+  const net = Math.max(0, gross - deductible - depreciation + extra + rental);
+
+  const areas = getCheckedLabels('damagedAreas');
+  const coverageDecision = getRadioValue('coverageDecision');
+  const repairTime = getRadioValue('repairTime');
+  const propUsable = getRadioValue('propUsable');
+
+  // Under-insurance calculation
+  const structLimit = parseFloat(val('structureCoverageLimit')) || 0;
+  const structAppraised = parseFloat(val('structureAppraisedValue')) || 0;
+  const contentsLimit = parseFloat(val('contentsCoverageLimit')) || 0;
+  const contentsAppraised = parseFloat(val('contentsAppraisedValue')) || 0;
+  const structRatio = structAppraised > 0 ? Math.min(1, structLimit / structAppraised) : 1;
+  const contentsRatio = contentsAppraised > 0 ? Math.min(1, contentsLimit / contentsAppraised) : 1;
+
+  let eventDetails = '';
+  if (selectedEvent === 'fire') {
+    eventDetails = `
+      <h2>🔥 ממצאי שריפה</h2>
+      <dl class="rp-meta">
+        <dt>מקור הדלקה</dt><dd>${val('fireCause') || '—'}</dd>
+        <dt>היקף השריפה</dt><dd>${getRadioValue('fireScope') || '—'}</dd>
+        <dt>נזקי עשן ופיח</dt><dd>${getRadioValue('smokeScope') || '—'}</dd>
+        <dt>הפעלת מטף</dt><dd>${getRadioValue('fireExtinguisher') || '—'}</dd>
+        <dt>התערבות מכבי אש</dt><dd>${getRadioValue('fireFighters') || '—'}</dd>
+      </dl>`;
+  } else if (selectedEvent === 'water') {
+    eventDetails = `
+      <h2>💧 ממצאי נזקי מים</h2>
+      <dl class="rp-meta">
+        <dt>מקור הנזילה</dt><dd>${val('waterSource') || '—'}</dd>
+        <dt>משך הנזילה</dt><dd>${val('waterDuration') || '—'}</dd>
+        <dt>גובה מים</dt><dd>${val('waterLevel') || '—'}</dd>
+        <dt>עובש / לחות</dt><dd>${getRadioValue('moldPresent') || '—'}</dd>
+        <dt>תיקון הצנרת</dt><dd>${getRadioValue('waterFixed') || '—'}</dd>
+      </dl>`;
+  } else if (selectedEvent === 'break_in') {
+    eventDetails = `
+      <h2>🔓 ממצאי אירוע הפריצה</h2>
+      <dl class="rp-meta">
+        <dt>נקודת כניסה</dt><dd>${val('entryPoint') || '—'}</dd>
+        <dt>מערכת אזעקה</dt><dd>${getRadioValue('alarmSystem') || '—'}</dd>
+        <dt>מצלמות אבטחה</dt><dd>${getRadioValue('cctv') || '—'}</dd>
+        <dt>מספר תיק משטרה</dt><dd>${val('policeCase') || '—'}</dd>
+        <dt>כניסה בכוח</dt><dd>${getRadioValue('forcedEntry') || '—'}</dd>
+        <dt>ונדליזם</dt><dd>${getRadioValue('vandalism') || '—'}</dd>
+      </dl>`;
+  }
+
+  // Damage rows with coverage tags
+  let coveredRows = '', uncoveredRows = '';
+  rows.forEach(r => {
+    const catTag = `<span class="dmg-cat ${r.isCovered ? (r.cat === 'contents' ? 'contents' : 'structure') : 'excluded-tag'}">${r.catLabel}</span>`;
+    const priceStr = '₪' + Math.round(r.price * mult).toLocaleString('he-IL');
+    const tr = `<tr ${!r.isCovered ? 'style="opacity:0.6;text-decoration:line-through;background:#fff5f5"' : ''}>
+      <td>${catTag} ${r.desc}</td>
+      <td>${r.qty || '—'}</td>
+      <td style="text-align:left">${priceStr}</td>
+    </tr>`;
+    if (r.isCovered) coveredRows += tr;
+    else uncoveredRows += tr;
+  });
+
+  const fmtM = n => '₪' + Math.round(n).toLocaleString('he-IL');
+
+  // Build underinsurance section for report
+  let underinsuranceHtml = '';
+  if (structLimit > 0 && structAppraised > 0) {
+    const sRatio = Math.round((structLimit / structAppraised) * 100);
+    const sColor = sRatio >= 100 ? '#16a34a' : sRatio >= 80 ? '#d97706' : '#dc2626';
+    underinsuranceHtml += `<tr><td>מבנה</td><td>${fmtM(structLimit)}</td><td>${fmtM(structAppraised)}</td><td style="color:${sColor};font-weight:700">${sRatio}%</td><td style="color:${sRatio<100?'#dc2626':'#16a34a'}">${sRatio<100?fmtM(structAppraised-structLimit)+' — תת ביטוח':'כיסוי מלא'}</td></tr>`;
+  }
+  if (cfg?.contents && contentsLimit > 0 && contentsAppraised > 0) {
+    const cRatio = Math.round((contentsLimit / contentsAppraised) * 100);
+    const cColor = cRatio >= 100 ? '#16a34a' : cRatio >= 80 ? '#d97706' : '#dc2626';
+    underinsuranceHtml += `<tr><td>תכולה</td><td>${fmtM(contentsLimit)}</td><td>${fmtM(contentsAppraised)}</td><td style="color:${cColor};font-weight:700">${cRatio}%</td><td style="color:${cRatio<100?'#dc2626':'#16a34a'}">${cRatio<100?fmtM(contentsAppraised-contentsLimit)+' — תת ביטוח':'כיסוי מלא'}</td></tr>`;
+  }
+
+  // Extensions list
+  const extensions = Array.from(document.querySelectorAll('#extensionsGrid .checkbox-item.checked .cb-label')).map(e => e.textContent.trim());
+  const extraExt = val('extraExtensions');
+  if (extraExt) extensions.push(extraExt);
+
+  const reportDate = new Date().toLocaleDateString('he-IL', {year:'numeric',month:'long',day:'numeric'});
+  const visitDateFmt = val('visitDate') ? new Date(val('visitDate')).toLocaleDateString('he-IL') : '—';
+  const eventDateFmt = val('eventDate') ? new Date(val('eventDate')).toLocaleDateString('he-IL') : '—';
+
+  // Rental section
+  const rentalHTML = (propUsable === 'לא' && rental > 0) ? `
+    <h2>🏘️ פיצוי שכירות חלופית</h2>
+    <dl class="rp-meta">
+      <dt>שכר דירה חודשי</dt><dd>${fmtM(parseFloat(val('rentalMonthly'))||0)}</dd>
+      <dt>מספר חודשים</dt><dd>${val('rentalMonths') || '—'}</dd>
+      <dt>בסיס ההערכה</dt><dd>${val('rentalBasis') || '—'}</dd>
+      <dt>סה"כ פיצוי שכירות</dt><dd style="font-weight:700;color:#1e40af">${fmtM(rental)}</dd>
+    </dl>
+    ${val('rentalNotes') ? `<p><strong>הערות:</strong> ${val('rentalNotes')}</p>` : ''}` : '';
+
+  document.getElementById('reportOutput').innerHTML = `
+    <div class="rp-header">
+      <div class="rp-logo">🏛️</div>
+      <div class="rp-title">חוות דעת שמאי רכוש</div>
+      <div class="rp-sub">
+        ${selectedEvent ? `סוג אירוע: ${evIcons[selectedEvent] || ''} ${evLabels[selectedEvent] || ''}` : ''}
+        &nbsp;|&nbsp; תאריך הדוח: ${reportDate}
+      </div>
+    </div>
+
+    <h2>🗂️ פרטי הדוח</h2>
+    <dl class="rp-meta">
+      <dt>שמאי מדווח</dt><dd>${APPRAISER.name}</dd>
+      <dt>טלפון</dt><dd>${APPRAISER.phone}</dd>
+      <dt>דוא"ל</dt><dd>${APPRAISER.email}</dd>
+      <dt>מספר רישיון</dt><dd>${val('appraisalLicense') || 'יעודכן בקרוב'}</dd>
+      <dt>חברת שמאות</dt><dd>${val('appraisalFirm') || '—'}</dd>
+      <dt>תאריך ביקור</dt><dd>${visitDateFmt}</dd>
+      <dt>חברת ביטוח</dt><dd>${val('insuranceCompany') || '—'}</dd>
+      <dt>מספר פוליסה</dt><dd>${val('policyNum') || '—'}</dd>
+      <dt>מספר תביעה</dt><dd>${val('claimNum') || '—'}</dd>
+      <dt>תאריך האירוע</dt><dd>${eventDateFmt}</dd>
+    </dl>
+
+    <h2>🛡️ פרטי הפוליסה</h2>
+    <dl class="rp-meta">
+      <dt>סוג פוליסה</dt><dd>${cfg ? cfg.label : '—'}</dd>
+      <dt>כיסוי מבנה</dt><dd>${cfg ? (cfg.structure ? '✅ כן' : '❌ לא') : '—'}</dd>
+      <dt>כיסוי תכולה</dt><dd>${cfg ? (cfg.contents ? '✅ כן' : '❌ לא') : '—'}</dd>
+      <dt>גבול כיסוי מבנה</dt><dd>${val('structureCoverageLimit') ? fmtM(parseFloat(val('structureCoverageLimit'))) : '—'}</dd>
+      <dt>גבול כיסוי תכולה</dt><dd>${val('contentsCoverageLimit') ? fmtM(parseFloat(val('contentsCoverageLimit'))) : '—'}</dd>
+      <dt>השתתפות עצמית מבנה</dt><dd>${val('policyDeductibleStructure') || '—'}</dd>
+      <dt>השתתפות עצמית תכולה</dt><dd>${val('policyDeductibleContents') || '—'}</dd>
+      <dt>בסיס פיצוי תכולה</dt><dd>${val('contentsCompensationBasis') || '—'}</dd>
+    </dl>
+    ${extensions.length ? `<p><strong>הרחבות פעילות:</strong> ${extensions.join(' • ')}</p>` : ''}
+
+    ${underinsuranceHtml ? `
+    <h2>⚖️ הלימות ביטוח ותת-ביטוח</h2>
+    <table>
+      <thead><tr><th>סוג</th><th>גבול כיסוי</th><th>שווי שמאי</th><th>שיעור</th><th>הערה</th></tr></thead>
+      <tbody>${underinsuranceHtml}</tbody>
+    </table>
+    ${val('underinsuranceNotes') ? `<p style="margin-top:8px"><strong>הערות:</strong> ${val('underinsuranceNotes')}</p>` : ''}` : ''}
+
+    <h2>👤 פרטי המבוטח</h2>
+    <dl class="rp-meta">
+      <dt>שם מלא</dt><dd>${val('insuredName') || '—'}</dd>
+      <dt>מספר ת.ז.</dt><dd>${val('insuredId') || '—'}</dd>
+      <dt>טלפון</dt><dd>${val('insuredPhone') || '—'}</dd>
+      <dt>קשר לנכס</dt><dd>${val('insuredRelation') || '—'}</dd>
+    </dl>
+
+    <h2>🏠 פרטי הנכס</h2>
+    <dl class="rp-meta">
+      <dt>כתובת</dt><dd>${[val('propStreet'), val('propNum'), val('propApt') ? 'דירה ' + val('propApt') : ''].filter(Boolean).join(' ') || '—'}</dd>
+      <dt>עיר</dt><dd>${val('propCity') || '—'}</dd>
+      <dt>סוג נכס</dt><dd>${val('propType') || '—'}</dd>
+      <dt>שטח (מ"ר)</dt><dd>${val('propArea') ? val('propArea') + ' מ"ר' : '—'}</dd>
+      <dt>שנת בנייה</dt><dd>${val('propYear') || '—'}</dd>
+      <dt>חומר בנייה</dt><dd>${val('propMaterial') || '—'}</dd>
+      <dt>מצב לפני האירוע</dt><dd>${val('propConditionBefore') || '—'}</dd>
+      <dt>נכס ניתן לשימוש</dt><dd>${propUsable || '—'}</dd>
+    </dl>
+
+    <h2>${evIcons[selectedEvent] || '📋'} פרטי האירוע</h2>
+    <dl class="rp-meta">
+      <dt>תאריך</dt><dd>${eventDateFmt}</dd>
+      <dt>שעה</dt><dd>${val('eventTime') || '—'}</dd>
+      <dt>כיצד נתגלה</dt><dd>${val('discoveryMethod') || '—'}</dd>
+      <dt>דווח לרשויות</dt><dd>${getRadioValue('reportedToAuth') || '—'}</dd>
+    </dl>
+    ${val('eventBrief') ? `<p style="margin-top:8px"><strong>תיאור האירוע:</strong> ${val('eventBrief')}</p>` : ''}
+
+    ${eventDetails}
+
+    <h2>🔍 תיאור הנזק</h2>
+    ${areas.length ? `<p><strong>אזורים שנפגעו:</strong> ${areas.join(', ')}</p>` : ''}
+    ${getRadioValue('damageSeverity') ? `<p><strong>חומרת הנזק:</strong> ${getRadioValue('damageSeverity')}</p>` : ''}
+    ${val('damageDescription') ? `<p style="white-space:pre-line">${val('damageDescription')}</p>` : ''}
+
+    <h2>💰 כתב כמויות ותמחור</h2>
+    ${(() => {
+      const boqData = getBoqData();
+      const vatActive = document.querySelector('#vatCalc .radio-btn.active')?.textContent?.includes('18%') ||
+                        document.querySelector('#vatCalc .radio-btn.active')?.textContent?.includes('כולל');
+      const mult = vatActive ? 1.18 : 1;
+
+      if (!boqData.length || boqData.every(s => s.rows.length === 0)) {
+        return '<p style="color:#94a3b8">לא הוזנו פריטי נזק.</p>';
+      }
+
+      let html = '';
+      let grandTotal = 0;
+
+      boqData.forEach(sec => {
+        if (sec.rows.length === 0) return;
+        grandTotal += sec.secTotal;
+        html += `
+          <div style="margin-bottom:1.5rem">
+            <div style="font-weight:700;font-size:0.95rem;color:#0f1419;background:#f1f5f9;padding:8px 14px;border-right:4px solid #d4a853;margin-bottom:0">
+              ${sec.sectionNum}. ${sec.title}
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:0.84rem">
+              <thead>
+                <tr style="background:#f8fafc">
+                  <th style="padding:6px 10px;text-align:right;border:1px solid #e2e8f0;width:52px;color:#64748b">סעיף</th>
+                  <th style="padding:6px 10px;text-align:right;border:1px solid #e2e8f0;color:#64748b">תיאור עבודה</th>
+                  <th style="padding:6px 10px;text-align:center;border:1px solid #e2e8f0;width:70px;color:#64748b">יח'</th>
+                  <th style="padding:6px 10px;text-align:center;border:1px solid #e2e8f0;width:65px;color:#64748b">כמות</th>
+                  <th style="padding:6px 10px;text-align:left;border:1px solid #e2e8f0;width:90px;color:#64748b">מחיר יח'</th>
+                  <th style="padding:6px 10px;text-align:left;border:1px solid #e2e8f0;width:100px;color:#64748b">סה"כ (₪)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${sec.rows.map(row => `
+                  <tr>
+                    <td style="padding:6px 10px;border:1px solid #e2e8f0;text-align:center;color:#94a3b8;font-size:0.78rem">${row.subNum}</td>
+                    <td style="padding:6px 10px;border:1px solid #e2e8f0">${row.desc}</td>
+                    <td style="padding:6px 10px;border:1px solid #e2e8f0;text-align:center;color:#64748b">${row.unit}</td>
+                    <td style="padding:6px 10px;border:1px solid #e2e8f0;text-align:center">${row.qty}</td>
+                    <td style="padding:6px 10px;border:1px solid #e2e8f0;text-align:left">₪${row.price.toLocaleString('he-IL')}</td>
+                    <td style="padding:6px 10px;border:1px solid #e2e8f0;text-align:left;font-weight:600">₪${row.total.toLocaleString('he-IL')}</td>
+                  </tr>`).join('')}
+              </tbody>
+              <tfoot>
+                <tr style="background:#fef9ec">
+                  <td colspan="5" style="padding:7px 14px;border:1px solid #e2e8f0;font-weight:700;color:#92400e;text-align:right">
+                    סה"כ ${sec.title}:
+                  </td>
+                  <td style="padding:7px 14px;border:1px solid #e2e8f0;font-weight:800;color:#92400e;text-align:left">
+                    ₪${sec.secTotal.toLocaleString('he-IL')}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>`;
+      });
+
+      const withVat = grandTotal * mult;
+      const deductible   = parseFloat(val('deductible'))   || 0;
+      const depreciation = parseFloat(val('depreciation')) || 0;
+      const extra        = parseFloat(val('extraCosts'))   || 0;
+      const rentalAmt    = parseFloat(val('rentalTotal'))  || 0;
+      const net          = Math.max(0, withVat - deductible - depreciation + extra + rentalAmt);
+      const fmtM = n => '₪' + Math.round(n).toLocaleString('he-IL');
+
+      html += `
+        <div style="margin-top:1rem;border:2px solid #d4a853;border-radius:8px;overflow:hidden">
+          <div style="background:#fef9ec;padding:10px 16px;display:flex;justify-content:space-between;font-size:0.9rem">
+            <span style="color:#92400e;font-weight:600">סה"כ לפני מע"מ</span>
+            <span style="font-weight:800;color:#92400e">${fmtM(grandTotal)}</span>
+          </div>
+          ${vatActive ? `<div style="background:#f8fafc;padding:8px 16px;display:flex;justify-content:space-between;font-size:0.87rem;border-top:1px solid #e2e8f0">
+            <span style="color:#64748b">מע"מ 18%</span>
+            <span style="color:#64748b">${fmtM(grandTotal * 0.18)}</span>
+          </div>` : ''}
+          <div style="background:#d4a853;padding:10px 16px;display:flex;justify-content:space-between">
+            <span style="color:#0f1419;font-weight:700;font-size:0.95rem">סה"כ כולל מע"מ</span>
+            <span style="color:#0f1419;font-weight:800;font-size:1.05rem">${fmtM(withVat)}</span>
+          </div>
+        </div>
+        ${deductible ? `<p style="margin-top:8px;font-size:0.85rem">בניכוי השתתפות עצמית: ${fmtM(deductible)}</p>` : ''}
+        ${depreciation ? `<p style="font-size:0.85rem">בניכוי ירידת ערך: ${fmtM(depreciation)}</p>` : ''}
+        ${rentalAmt ? `<p style="font-size:0.85rem">פיצוי שכירות: + ${fmtM(rentalAmt)}</p>` : ''}
+        <div style="background:#0f1419;color:white;padding:12px 18px;border-radius:8px;display:flex;justify-content:space-between;margin-top:10px">
+          <span style="font-weight:700;font-size:0.95rem">💎 סכום לתשלום מוצע</span>
+          <span style="font-weight:800;color:#d4a853;font-size:1.1rem">${fmtM(net)}</span>
+        </div>`;
+
+      return html;
+    })()}
+
+    ${val('amountNotes') ? `<p style="margin-top:12px;font-size:0.85rem"><strong>הערות לסכום:</strong> ${val('amountNotes')}</p>` : ''}
+
+    <h2>⚖️ מסקנות ושיקולים</h2>
+    ${coverageDecision ? `<p><strong>קביעת כיסוי:</strong> ${coverageDecision}</p>` : ''}
+    ${val('causeConclusion') ? `<p><strong>קביעת סיבת הנזק:</strong> ${val('causeConclusion')}</p>` : ''}
+    ${val('circumstances') ? `<p><strong>נסיבות מחמירות / מקלות:</strong> ${val('circumstances')}</p>` : ''}
+    ${val('repairPriority') ? `<p><strong>המלצות לשיקום:</strong> ${val('repairPriority')}</p>` : ''}
+    ${repairTime ? `<p><strong>זמן שיקום משוער:</strong> ${repairTime}</p>` : ''}
+    ${val('generalNotes') ? `<p><strong>הערות כלליות:</strong> ${val('generalNotes')}</p>` : ''}
+
+    ${photos.length ? `
+    <h2>📸 תיעוד צילומי</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
+      ${photos.slice(0, 9).map(p => `<div style="aspect-ratio:1;overflow:hidden;border-radius:6px;border:1px solid #e2e8f0">
+        <img src="${p.src}" style="width:100%;height:100%;object-fit:cover">
+        ${p.caption ? `<p style="font-size:0.7rem;color:#64748b;padding:4px">${p.caption}</p>` : ''}
+      </div>`).join('')}
+    </div>` : ''}
+
+    ${val('evaluationExplanation') ? `
+    <div style="margin-top:2rem;padding-top:1.5rem;border-top:2px solid #e2e8f0">
+      <h2 style="margin-bottom:0.75rem">📝 פרק 5 – הסברים להערכה</h2>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-right:4px solid #d4a853;border-radius:0 8px 8px 0;padding:1rem 1.25rem;font-size:0.9rem;color:#334155;line-height:1.9;white-space:pre-line">${val('evaluationExplanation')}</div>
+    </div>` : ''}
+
+    <div style="margin-top:2rem;padding-top:1.5rem;border-top:2px solid #e2e8f0">
+      <h2 style="margin-bottom:0.75rem">🖊️ הצהרת שמאי</h2>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-right:4px solid #d4a853;border-radius:0 8px 8px 0;padding:1.25rem 1.5rem;font-size:0.9rem;color:#334155;line-height:2;white-space:pre-line">${val('appraisalDeclaration') || `אני הח"מ מצהיר כי חוות דעת זו נערכה על ידי באופן מקצועי, עצמאי ובלתי תלוי, בהתאם לממצאים שנצפו בביקור בנכס ולנתונים שעמדו בפניי במועד עריכת הדו"ח.\nההערכה בוצעה בהתאם לכללים המקובלים בתחום שמאות הרכוש ועל בסיס ניסיון מקצועי ומקורות תמחור מקובלים.\nחוות דעת זו מיועדת להערכת הנזק נשוא האירוע בלבד.`}</div>
+    </div>
+
+    <div class="rp-signature" style="margin-top:2.5rem">
+      <div class="sig-box">
+        <div style="height:50px"></div>
+        <div style="border-top:1px solid #94a3b8;padding-top:6px;text-align:center">חתימת השמאי</div>
+        <div style="font-size:0.78rem;margin-top:4px;color:#475569">ירון אמיר</div>
+        <div style="font-size:0.72rem;color:#94a3b8">שמאי רכוש</div>
+      </div>
+      <div style="text-align:center;font-size:0.78rem;color:#94a3b8;margin-top:auto;padding-bottom:6px">
+        <div style="font-size:1rem;margin-bottom:4px">🏛️</div>
+        <div>תאריך הפקת הדוח:</div>
+        <div style="font-weight:600;color:#475569;margin-top:2px">${reportDate}</div>
+      </div>
+      <div class="sig-box">
+        <div style="height:50px"></div>
+        <div style="border-top:1px solid #94a3b8;padding-top:6px;text-align:center">חתימת המבוטח</div>
+        <div style="font-size:0.78rem;margin-top:4px;color:#475569">${val('insuredName') || '___________'}</div>
+        <div style="font-size:0.72rem;color:#94a3b8">ת.ז. ${val('insuredId') || '___________'}</div>
+      </div>
+    </div>
+  `;
+}
+// ====== EMAIL FUNCTIONS ======
+function openEmailModal() {
+  const modal = document.getElementById('emailModal');
+  modal.style.display = 'flex';
+  // Pre-fill insured email if available
+  const insuredName = document.getElementById('insuredName')?.value || '';
+  const policyNum   = document.getElementById('policyNum')?.value || '';
+  if (insuredName) {
+    document.getElementById('emailSubject').value =
+      `חוות דעת שמאי רכוש – ירון אמיר | ${insuredName}${policyNum ? ' | פוליסה ' + policyNum : ''}`;
+    document.getElementById('emailBody').value =
+      `לכבוד ${insuredName},\n\nמצורפת חוות הדעת השמאית שהוכנה עבורך בגין האירוע הנ"ל.\n\nבכל שאלה ניתן לפנות אלינו.\n\nבכבוד,\nירון אמיר – שמאי רכוש`;
+  }
+}
+
+function closeEmailModal() {
+  document.getElementById('emailModal').style.display = 'none';
+}
+
+function sendByEmail() {
+  const to      = document.getElementById('emailInsured')?.value?.trim() || '';
+  const cc      = document.getElementById('emailCC')?.value?.trim()      || '';
+  const subject = document.getElementById('emailSubject')?.value         || 'חוות דעת שמאי רכוש';
+  const body    = document.getElementById('emailBody')?.value            || '';
+
+  if (!to) { showToast('נא להזין כתובת מייל', 'error'); return; }
+
+  // Build mailto link (body is plain text summary, full report via download)
+  const bodyText = body + '\n\n---\n[הדוח המלא מצורף כקובץ HTML - ניתן לפתוח בכל דפדפן]\n\nסכום הערכה: ' +
+    (document.getElementById('totalGross')?.textContent || '') + '\nלתשלום: ' +
+    (document.getElementById('totalNet')?.textContent || '');
+
+  const params = new URLSearchParams();
+  if (cc) params.set('cc', cc);
+  params.set('subject', subject);
+  params.set('body', bodyText);
+
+  const mailto = `mailto:${encodeURIComponent(to)}?${params.toString()}`;
+  window.location.href = mailto;
+
+  // Auto-download the HTML file too
+  setTimeout(() => downloadHtmlReport(), 500);
+  closeEmailModal();
+  showToast('פותח תוכנת מייל וטוען הורדת הקובץ...', 'success');
+}
+
+function downloadHtmlReport() {
+  const reportContent = document.getElementById('reportOutput')?.innerHTML || '';
+  const insuredName = document.getElementById('insuredName')?.value || 'מבוטח';
+  const dateStr = new Date().toLocaleDateString('he-IL').replace(/\//g, '-');
+
+  const fullHtml = `<!DOCTYPE html><html lang="he" dir="rtl">
+<head><meta charset="UTF-8">
+<title>חוות דעת שמאי – ${insuredName}</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Heebo', sans-serif; direction: rtl; max-width: 900px; margin: 40px auto; padding: 20px; color: #1e293b; }
+  h2 { color: #0f1419; border-bottom: 2px solid #d4a853; padding-bottom: 6px; margin-top: 2rem; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th { background: #f8fafc; padding: 8px 12px; border: 1px solid #e2e8f0; text-align: right; font-size: 0.85rem; color: #64748b; }
+  td { padding: 7px 12px; border: 1px solid #e2e8f0; font-size: 0.87rem; }
+  .rp-header { background: linear-gradient(135deg,#0f1419,#1e293b); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: center; }
+  .rp-title { font-size: 1.6rem; font-weight: 800; margin: 0.5rem 0; }
+  .rp-total { display: flex; justify-content: space-between; background: #1e293b; color: white; padding: 12px 20px; border-radius: 8px; font-weight: 700; margin: 0.5rem 0; }
+  dl { display: grid; grid-template-columns: 180px 1fr; gap: 4px 16px; margin: 1rem 0; }
+  dt { color: #64748b; font-size: 0.85rem; padding: 4px 0; }
+  dd { font-weight: 500; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+  .dmg-cat { display:inline-block;font-size:0.7rem;padding:2px 7px;border-radius:99px;font-weight:600;margin-left:4px; }
+  .dmg-cat.structure { background:#dbeafe;color:#1d4ed8; }
+  .dmg-cat.contents { background:#f3e8ff;color:#7e22ce; }
+</style>
+</head><body>${reportContent}
+<!-- ===== FIREBASE CLOUD INTEGRATION ===== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs } 
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } 
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAepqvT-NRxTiVemkaxNJWpyAQ9ibxrkcw",
+    authDomain: "yaron-appraiser.firebaseapp.com",
+    projectId: "yaron-appraiser",
+    storageBucket: "yaron-appraiser.firebasestorage.app",
+    messagingSenderId: "179370141848",
+    appId: "1:179370141848:web:d5843d9641dce3adabc8ed",
+    measurementId: "G-F5Y3LT9H7F"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  window.saveCaseToCloud = async function(caseData) {
+    const docRef = await addDoc(collection(db, "cases"), caseData);
+    alert("✔ התיק נשמר בענן (ID: " + docRef.id + ")");
+  };
+
+  window.uploadFileToCloud = async function(file) {
+    const storageRef = ref(storage, "files/" + Date.now() + "_" + file.name);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    return url;
+  };
+</script>
+
+</body></html>`;
+
+  const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `חוות-דעת-שמאי-${insuredName}-${dateStr}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('הדוח הורד בהצלחה ✓');
+}
+
+function printReport() {
+  const content = document.getElementById('reportOutput').innerHTML;
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html><html lang="he" dir="rtl">
+    <head><meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:'Heebo',sans-serif;direction:rtl;padding:2cm;color:#1a1a2e;line-height:1.7}
+      h2{font-family:'Frank Ruhl Libre',serif;font-size:1.1rem;color:#0f1419;border-right:4px solid #d4a853;padding-right:10px;margin:1.5rem 0 0.75rem}
+      .rp-header{text-align:center;border-bottom:3px solid #d4a853;padding-bottom:1.5rem;margin-bottom:2rem}
+      .rp-title{font-family:'Frank Ruhl Libre',serif;font-size:1.8rem;font-weight:900}
+      .rp-sub{font-size:0.9rem;color:#64748b}
+      .rp-meta{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 2rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1rem 1.5rem;margin-bottom:1.5rem;font-size:0.88rem}
+      dt{color:#64748b;font-weight:600}dd{color:#1a1a2e}
+      table{width:100%;border-collapse:collapse;margin:0.75rem 0;font-size:0.88rem}
+      th{background:#0f1419;color:white;padding:8px 12px;text-align:right;font-weight:600}
+      td{padding:8px 12px;border-bottom:1px solid #e2e8f0}
+      tr:nth-child(even) td{background:#f8fafc}
+      .rp-total{background:#d4a853;color:white;padding:10px 14px;border-radius:6px;display:flex;justify-content:space-between;font-weight:700;margin-top:4px}
+      .rp-signature{margin-top:2.5rem;padding-top:1.5rem;border-top:2px solid #e2e8f0;display:flex;justify-content:space-between;align-items:flex-end;font-size:0.85rem;color:#64748b}
+      .sig-box{width:200px;text-align:center}
+      p{font-size:0.9rem;color:#334155;margin-bottom:0.5rem;line-height:1.7}
+      pre,div[style*="white-space:pre-line"]{white-space:pre-line;font-family:'Heebo',sans-serif}
+      @media print{body{padding:1.5cm}}
+    </style></head>
+    <body>${content}
+<!-- ===== FIREBASE CLOUD INTEGRATION ===== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs } 
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } 
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAepqvT-NRxTiVemkaxNJWpyAQ9ibxrkcw",
+    authDomain: "yaron-appraiser.firebaseapp.com",
+    projectId: "yaron-appraiser",
+    storageBucket: "yaron-appraiser.firebasestorage.app",
+    messagingSenderId: "179370141848",
+    appId: "1:179370141848:web:d5843d9641dce3adabc8ed",
+    measurementId: "G-F5Y3LT9H7F"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  window.saveCaseToCloud = async function(caseData) {
+    const docRef = await addDoc(collection(db, "cases"), caseData);
+    alert("✔ התיק נשמר בענן (ID: " + docRef.id + ")");
+  };
+
+  window.uploadFileToCloud = async function(file) {
+    const storageRef = ref(storage, "files/" + Date.now() + "_" + file.name);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    return url;
+  };
+</script>
+
+</body></html>
+  `);
+  w.document.close();
+  setTimeout(() => w.print(), 500);
+}
+
+function resetAll() {
+  if (confirm('האם לאפס את כל הנתונים ולהתחיל מחדש?')) {
+    location.reload();
+  }
+}
+
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+
+<!-- ===== FIREBASE CLOUD INTEGRATION ===== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs } 
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } 
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAepqvT-NRxTiVemkaxNJWpyAQ9ibxrkcw",
+    authDomain: "yaron-appraiser.firebaseapp.com",
+    projectId: "yaron-appraiser",
+    storageBucket: "yaron-appraiser.firebasestorage.app",
+    messagingSenderId: "179370141848",
+    appId: "1:179370141848:web:d5843d9641dce3adabc8ed",
+    measurementId: "G-F5Y3LT9H7F"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  window.saveCaseToCloud = async function(caseData) {
+    const docRef = await addDoc(collection(db, "cases"), caseData);
+    alert("✔ התיק נשמר בענן (ID: " + docRef.id + ")");
+  };
+
+  window.uploadFileToCloud = async function(file) {
+    const storageRef = ref(storage, "files/" + Date.now() + "_" + file.name);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    return url;
+  };
+</script>
+
+</body>
+</html>
