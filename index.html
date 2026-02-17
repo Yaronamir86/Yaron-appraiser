@@ -881,6 +881,42 @@
     .steps-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; gap: 0.5rem; }
     .step-pill { flex: 0 0 auto; white-space: nowrap; }
     .main { padding-top: 1rem; }
+    /* === Mobile layout override (strong) === */
+  body { font-size: 15px; }
+
+  .container, .main { padding: 1rem !important; }
+
+  .header-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .logo { justify-content: center; }
+
+  .header-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .header-actions .btn { width: 100%; }
+
+  .steps-nav {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+  }
+
+  .step-pill { flex: 0 0 auto; white-space: nowrap; }
+
+  .progress-card, .card { padding: 1rem; }
+
+  .form-grid, .form-grid.cols-3, .damage-item { grid-template-columns: 1fr !important; }
   }
 </style>
 </head>
