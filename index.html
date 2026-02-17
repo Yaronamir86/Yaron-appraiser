@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ירון אמיר | מערכת חוות דעת שמאי רכוש</title>
+<title>מערכת חוות דעת שמאי רכוש</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -872,86 +872,35 @@
     .damage-item { grid-template-columns: 1fr 1fr; }
     .photo-grid { grid-template-columns: repeat(3, 1fr); }
     .main { padding: 1rem; }
-
-    /* Mobile header + nav fixes */
-    .header-inner { height: auto; padding: 0.75rem 1rem; flex-direction: column; align-items: stretch; gap: 0.75rem; }
-    .logo { justify-content: center; }
-    .header-actions { width: 100%; display: flex; gap: 0.5rem; }
-    .header-actions .btn { flex: 1; justify-content: center; }
-    .steps-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; gap: 0.5rem; }
-    .step-pill { flex: 0 0 auto; white-space: nowrap; }
-    .main { padding-top: 1rem; }
-    /* === Mobile layout override (strong) === */
-  body { font-size: 15px; }
-
-  .container, .main { padding: 1rem !important; }
-
-  .header-inner {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1rem;
   }
 
-  .logo { justify-content: center; }
-
-  .header-actions {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .header-actions .btn { width: 100%; }
-
-  .steps-nav {
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.5rem;
-  }
-
-  .step-pill { flex: 0 0 auto; white-space: nowrap; }
-
-  .progress-card, .card { padding: 1rem; }
-
-  .form-grid, .form-grid.cols-3, .damage-item { grid-template-columns: 1fr !important; }
-  }
-  html, body {
-    width: 100%;
-    overflow-x: hidden;
-}
-
-.main {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
-}
-
+/* ====== MOBILE HARDENING (added) ====== */
+html, body { width: 100%; overflow-x: hidden; }
+.header-inner, .main { width: 100%; }
+.header { padding: 0 1rem; }
+.header-inner { padding: 0.75rem 0; height: auto; gap: 0.75rem; flex-wrap: wrap; }
+.header-actions { width: 100%; display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+.header-actions .btn { flex: 1 1 140px; }
+.steps-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 0.25rem; }
+.step-pill { white-space: nowrap; flex: 0 0 auto; }
+.report-preview { overflow-x: auto; }
+table { display: block; overflow-x: auto; width: 100%; }
 @media (max-width: 768px) {
-
-    .header {
-        padding: 0 1rem;
-    }
-
-    .header-inner {
-        height: auto;
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 0.75rem 0;
-    }
-
-    .header-actions {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .main {
-        padding: 1rem;
-    }
+  .main { padding: 1rem; }
+  .card { padding: 1rem; }
+  .form-grid { grid-template-columns: 1fr !important; }
+  .form-grid.cols-2, .form-grid.cols-3 { grid-template-columns: 1fr !important; }
+  .event-types { grid-template-columns: 1fr 1fr; }
+  .damage-item { grid-template-columns: 1fr !important; }
+  .photo-grid { grid-template-columns: repeat(2, 1fr); }
+  .step-header h2 { font-size: 1.1rem; }
+  .progress-wrap { flex-direction: column; align-items: stretch; gap: 0.5rem; }
 }
+@media (max-width: 420px) {
+  .event-types { grid-template-columns: 1fr; }
+  .photo-grid { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -961,7 +910,7 @@
     <div class="logo">
       <div class="logo-icon">🏛️</div>
       <div>
-        <div class="logo-text">ירון אמיר</div>
+        <div class="logo-text">ShomAI</div>
         <span class="logo-sub">מערכת חוות דעת שמאי רכוש</span>
       </div>
     </div>
@@ -2240,14 +2189,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ====== APPRAISER PROFILE (defaults) ======
-const APPRAISER = {
-  name: 'ירון אמיר',
-  role: 'שמאי רכוש',
-  phone: '050-329-2066',
-  email: 'yaronamir86@gmail.com'
-};
-
 let currentStep = 1;
 const totalSteps = 9;
 let selectedEvent = null;
@@ -3487,9 +3428,7 @@ function buildReport() {
 
     <h2>🗂️ פרטי הדוח</h2>
     <dl class="rp-meta">
-      <dt>שמאי מדווח</dt><dd>${APPRAISER.name}</dd>
-      <dt>טלפון</dt><dd>${APPRAISER.phone}</dd>
-      <dt>דוא"ל</dt><dd>${APPRAISER.email}</dd>
+      <dt>שמאי מדווח</dt><dd>ירון אמיר</dd>
       <dt>מספר רישיון</dt><dd>${val('appraisalLicense') || 'יעודכן בקרוב'}</dd>
       <dt>חברת שמאות</dt><dd>${val('appraisalFirm') || '—'}</dd>
       <dt>תאריך ביקור</dt><dd>${visitDateFmt}</dd>
@@ -3770,45 +3709,10 @@ function downloadHtmlReport() {
   .dmg-cat.structure { background:#dbeafe;color:#1d4ed8; }
   .dmg-cat.contents { background:#f3e8ff;color:#7e22ce; }
 </style>
-</head><body>${reportContent}
-<!-- ===== FIREBASE CLOUD INTEGRATION ===== -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs } 
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } 
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+</head><body>${reportContent}</body></html>`;
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAepqvT-NRxTiVemkaxNJWpyAQ9ibxrkcw",
-    authDomain: "yaron-appraiser.firebaseapp.com",
-    projectId: "yaron-appraiser",
-    storageBucket: "yaron-appraiser.firebasestorage.app",
-    messagingSenderId: "179370141848",
-    appId: "1:179370141848:web:d5843d9641dce3adabc8ed",
-    measurementId: "G-F5Y3LT9H7F"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-
-  window.saveCaseToCloud = async function(caseData) {
-    const docRef = await addDoc(collection(db, "cases"), caseData);
-    alert("✔ התיק נשמר בענן (ID: " + docRef.id + ")");
-  };
-
-  window.uploadFileToCloud = async function(file) {
-    const storageRef = ref(storage, "files/" + Date.now() + "_" + file.name);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    return url;
-  };
-</script>
-
-</body></html>`;
-
-  const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+  const safeHtml = String(fullHtml).replace(/<\/script/gi,'<\/script');
+  const blob = new Blob([safeHtml], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `חוות-דעת-שמאי-${insuredName}-${dateStr}.html`;
@@ -3845,43 +3749,7 @@ function printReport() {
       pre,div[style*="white-space:pre-line"]{white-space:pre-line;font-family:'Heebo',sans-serif}
       @media print{body{padding:1.5cm}}
     </style></head>
-    <body>${content}
-<!-- ===== FIREBASE CLOUD INTEGRATION ===== -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs } 
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } 
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAepqvT-NRxTiVemkaxNJWpyAQ9ibxrkcw",
-    authDomain: "yaron-appraiser.firebaseapp.com",
-    projectId: "yaron-appraiser",
-    storageBucket: "yaron-appraiser.firebasestorage.app",
-    messagingSenderId: "179370141848",
-    appId: "1:179370141848:web:d5843d9641dce3adabc8ed",
-    measurementId: "G-F5Y3LT9H7F"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-
-  window.saveCaseToCloud = async function(caseData) {
-    const docRef = await addDoc(collection(db, "cases"), caseData);
-    alert("✔ התיק נשמר בענן (ID: " + docRef.id + ")");
-  };
-
-  window.uploadFileToCloud = async function(file) {
-    const storageRef = ref(storage, "files/" + Date.now() + "_" + file.name);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    return url;
-  };
-</script>
-
-</body></html>
+    <body>${content}</body></html>
   `);
   w.document.close();
   setTimeout(() => w.print(), 500);
@@ -3900,41 +3768,5 @@ function showToast(msg, type='') {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 </script>
-
-<!-- ===== FIREBASE CLOUD INTEGRATION ===== -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs } 
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } 
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAepqvT-NRxTiVemkaxNJWpyAQ9ibxrkcw",
-    authDomain: "yaron-appraiser.firebaseapp.com",
-    projectId: "yaron-appraiser",
-    storageBucket: "yaron-appraiser.firebasestorage.app",
-    messagingSenderId: "179370141848",
-    appId: "1:179370141848:web:d5843d9641dce3adabc8ed",
-    measurementId: "G-F5Y3LT9H7F"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-
-  window.saveCaseToCloud = async function(caseData) {
-    const docRef = await addDoc(collection(db, "cases"), caseData);
-    alert("✔ התיק נשמר בענן (ID: " + docRef.id + ")");
-  };
-
-  window.uploadFileToCloud = async function(file) {
-    const storageRef = ref(storage, "files/" + Date.now() + "_" + file.name);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    return url;
-  };
-</script>
-
 </body>
 </html>
