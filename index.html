@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>מערכת חוות דעת – ירון אמיר שמאי רכוש</title>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -990,6 +995,12 @@
       </div>
     </div>
     <div class="header-actions">
+      <div id="saveStatus" style="display:flex;align-items:center;gap:8px;margin-left:1rem;font-size:0.85rem;color:var(--text-secondary)">
+        <span style="color:#22c55e">💾</span>
+        <span>שומר אוטומטית...</span>
+      </div>
+      <button class="btn btn-ghost" onclick="manualSave()" title="שמור עכשיו">💾</button>
+      <button class="btn btn-ghost" onclick="showDraftMenu()" title="טיוטאות">📂</button>
       <button class="btn btn-ghost" onclick="resetAll()">🔄 איפוס</button>
       <button class="btn btn-primary" onclick="goToStep(currentStep+1)" id="headerNextBtn">המשך →</button>
     </div>
@@ -2381,6 +2392,58 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ═══════════════════════════════════════════════════════════════
+// FIREBASE CONFIGURATION
+// ═══════════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyAepqvT-NRxTiVemkaxNJWpyAQ9ibxrkcw",
+  authDomain: "yaron-appraiser.firebaseapp.com",
+  projectId: "yaron-appraiser",
+  storageBucket: "yaron-appraiser.firebasestorage.app",
+  messagingSenderId: "179370141848",
+  appId: "1:179370141848:web:d5843d9641dce3adabc8ed",
+  measurementId: "G-F5Y3LT9H7F"
+};
+
+// Initialize Firebase
+let firebaseApp = null;
+let db = null;
+try {
+  firebaseApp = firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  console.log('✅ Firebase initialized');
+} catch (err) {
+  console.error('❌ Firebase init failed:', err);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTOSAVE SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+const AUTOSAVE_CONFIG = {
+  localInterval: 30000,      // 30 seconds
+  cloudInterval: 300000,     // 5 minutes (first sync after 60s)
+  enabled: true,
+  projectId: null
+};
+
+let autosaveTimer = null;
+let cloudSyncTimer = null;
+let lastLocalSave = null;
+let lastCloudSync = null;
+let hasUnsavedChanges = false;
+let cloudSyncInProgress = false;
+
+function generateProjectId() {
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substr(2, 9);
+  return `proj_${timestamp}_${random}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXISTING CODE STARTS HERE
+// ═══════════════════════════════════════════════════════════════
+
 let currentStep = 1;
 const totalSteps = 9;
 let selectedEvent = null;
@@ -2439,8 +2502,273 @@ function chapterALive() {
 // Legacy alias used in some places
 function autoFillFromInsured() { chapterALive(); }
 
+// ═══════════════════════════════════════════════════════════════
+// AUTOSAVE FUNCTIONS
+// ═══════════════════════════════════════════════════════════════
+
+function getAllFormData() {
+  return {
+    chapterA: {
+      insuredName: val('insuredName'),
+      insuredId: val('insuredId'),
+      insuredPhone: val('insuredPhone'),
+      insuredEmail: val('insuredEmail'),
+      insuredRelation: val('insuredRelation'),
+      propAddress: val('propAddress'),
+      insuranceCompany: val('insuranceCompany'),
+      policyNum: val('policyNum'),
+      claimNum: val('claimNum'),
+      adjustorName: val('adjustorName'),
+      policyFrom: val('policyFrom'),
+      policyTo: val('policyTo'),
+      deductible: val('deductible'),
+      eventDate: val('eventDate'),
+      visitDate: val('visitDate'),
+      lastDocDate: val('lastDocDate'),
+      reportDate: val('reportDate'),
+      appraisalLicense: val('appraisalLicense'),
+      appraisalFirm: val('appraisalFirm'),
+      appraisalPhone: val('appraisalPhone')
+    },
+    selectedEvent: selectedEvent,
+    eventBrief: val('eventBrief'),
+    property: {
+      street: val('propStreet'),
+      num: val('propNum'),
+      apt: val('propApt'),
+      city: val('propCity'),
+      type: val('propType'),
+      year: val('propYear'),
+      area: val('propArea'),
+      material: val('propMaterial')
+    },
+    policy: {
+      type: selectedPolicyType,
+      structureLimit: val('structureCoverageLimit'),
+      contentsLimit: val('contentsCoverageLimit')
+    },
+    damage: {
+      description: val('damageDescription')
+    },
+    boq: boqSections,
+    conclusions: {
+      cause: val('causeConclusion'),
+      repairPriority: val('repairPriority')
+    },
+    metadata: {
+      version: '1.0',
+      lastModified: new Date().toISOString(),
+      currentStep: currentStep
+    }
+  };
+}
+
+function saveToLocal() {
+  if (!AUTOSAVE_CONFIG.enabled) return;
+  
+  try {
+    const data = getAllFormData();
+    const snapshot = {
+      projectId: AUTOSAVE_CONFIG.projectId,
+      timestamp: Date.now(),
+      data: data
+    };
+    
+    localStorage.setItem('draft_latest', JSON.stringify(snapshot));
+    localStorage.setItem(`draft_${AUTOSAVE_CONFIG.projectId}`, JSON.stringify(snapshot));
+    
+    lastLocalSave = Date.now();
+    hasUnsavedChanges = false;
+    updateSaveStatus();
+    
+    console.log('💾 Saved locally');
+  } catch (err) {
+    console.error('Local save failed:', err);
+  }
+}
+
+async function syncToCloud() {
+  if (!AUTOSAVE_CONFIG.enabled || !db || cloudSyncInProgress) return;
+  if (!navigator.onLine) {
+    console.log('📴 Offline - skipping cloud sync');
+    return;
+  }
+  
+  cloudSyncInProgress = true;
+  updateSaveStatus('syncing');
+  
+  try {
+    const data = getAllFormData();
+    
+    await db.collection('drafts').doc(AUTOSAVE_CONFIG.projectId).set({
+      data: data,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      device: navigator.userAgent.substr(0, 100),
+      version: '1.0'
+    }, { merge: true });
+    
+    lastCloudSync = Date.now();
+    updateSaveStatus('synced');
+    console.log('☁️ Synced to cloud');
+  } catch (err) {
+    console.error('Cloud sync failed:', err);
+    updateSaveStatus('syncError');
+  } finally {
+    cloudSyncInProgress = false;
+  }
+}
+
+function updateSaveStatus(status) {
+  const indicator = document.getElementById('saveStatus');
+  if (!indicator) return;
+  
+  const now = Date.now();
+  const localAge = lastLocalSave ? Math.floor((now - lastLocalSave) / 1000) : null;
+  const cloudAge = lastCloudSync ? Math.floor((now - lastCloudSync) / 60000) : null;
+  
+  let icon = '💾';
+  let text = '';
+  let color = 'var(--text-secondary)';
+  
+  if (status === 'syncing') {
+    icon = '<span class="spin" style="display:inline-block">⟳</span>';
+    text = 'מסנכרן...';
+    color = '#3b82f6';
+  } else if (status === 'synced') {
+    icon = '☁️';
+    text = 'מסונכרן לענן';
+    color = '#22c55e';
+  } else if (status === 'syncError') {
+    icon = '⚠️';
+    text = 'שגיאה - נשמר מקומית';
+    color = '#f59e0b';
+  } else if (localAge !== null) {
+    if (localAge < 60) {
+      text = `נשמר לפני ${localAge}s`;
+    } else {
+      text = `נשמר לפני ${Math.floor(localAge/60)}m`;
+    }
+    if (cloudAge !== null && cloudAge < 10) {
+      icon = '☁️';
+      color = '#22c55e';
+    }
+  } else {
+    text = 'טרם נשמר';
+  }
+  
+  indicator.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:${color}">
+      <span>${icon}</span>
+      <span>${text}</span>
+    </div>
+  `;
+}
+
+function startAutosave() {
+  if (!AUTOSAVE_CONFIG.projectId) {
+    AUTOSAVE_CONFIG.projectId = generateProjectId();
+    console.log('🆔 Project ID:', AUTOSAVE_CONFIG.projectId);
+  }
+  
+  // Local save every 30 seconds
+  autosaveTimer = setInterval(() => {
+    if (hasUnsavedChanges) {
+      saveToLocal();
+    } else {
+      updateSaveStatus(); // Update time display
+    }
+  }, AUTOSAVE_CONFIG.localInterval);
+  
+  // Cloud sync: first after 60s, then every 5 minutes
+  setTimeout(() => {
+    syncToCloud();
+    cloudSyncTimer = setInterval(() => {
+      syncToCloud();
+    }, AUTOSAVE_CONFIG.cloudInterval);
+  }, 60000);
+  
+  console.log('🚀 Autosave started');
+}
+
+function markAsChanged() {
+  hasUnsavedChanges = true;
+}
+
+function manualSave() {
+  saveToLocal();
+  syncToCloud();
+}
+
+function loadFromLocal(projectId) {
+  try {
+    const key = projectId ? `draft_${projectId}` : 'draft_latest';
+    const stored = localStorage.getItem(key);
+    if (!stored) return null;
+    return JSON.parse(stored);
+  } catch (err) {
+    console.error('Load failed:', err);
+    return null;
+  }
+}
+
+function restoreDraft(snapshot) {
+  if (!snapshot || !snapshot.data) return;
+  
+  const data = snapshot.data;
+  
+  // Restore all fields
+  Object.keys(data.chapterA || {}).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) el.value = data.chapterA[key] || '';
+  });
+  
+  if (data.selectedEvent) selectedEvent = data.selectedEvent;
+  if (data.boq) { boqSections = data.boq; renderBoq(); }
+  
+  AUTOSAVE_CONFIG.projectId = snapshot.projectId;
+  chapterALive(); // Refresh displays
+  console.log('✅ Draft restored');
+}
+
+function exportToJSON() {
+  const data = getAllFormData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `yaron_backup_${AUTOSAVE_CONFIG.projectId}_${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function showDraftMenu() {
+  // TODO: UI for loading drafts
+  const draft = loadFromLocal();
+  if (draft) {
+    const age = Math.floor((Date.now() - draft.timestamp) / 60000);
+    if (confirm(`נמצאה טיוטה מלפני ${age} דקות. לשחזר?`)) {
+      restoreDraft(draft);
+    }
+  } else {
+    alert('לא נמצאו טיוטאות שמורות');
+  }
+}
+
+// Mark changes on any input
+document.addEventListener('input', markAsChanged);
+document.addEventListener('change', markAsChanged);
+
+// Prevent accidental close
+window.addEventListener('beforeunload', (e) => {
+  if (hasUnsavedChanges) {
+    saveToLocal();
+    e.preventDefault();
+    e.returnValue = 'יש שינויים שלא נשמרו';
+  }
+});
+
 // ====== INIT ======
-window.onload = () => {
+window.onload = async () => {
   // Set today's date as default for reportDate
   const today = new Date().toISOString().split('T')[0];
   const rd = document.getElementById('reportDate');
@@ -2450,6 +2778,19 @@ window.onload = () => {
   initCheckboxes();
   refreshDeclaration();
   chapterALive(); // init summary bar
+  
+  // Initialize autosave system
+  await initIndexedDB();
+  startAutoSave();
+  
+  // Check for existing draft
+  const draft = loadFromLocalStorage();
+  if (draft && draft.data) {
+    const minutesAgo = Math.round((Date.now() - draft.timestamp) / 60000);
+    if (minutesAgo < 1440) { // Less than 24 hours
+      showRecoveryModal(draft, minutesAgo);
+    }
+  }
 };
 
 // ====== CHECKBOX SYSTEM – FIXED ======
@@ -4167,6 +4508,599 @@ function showToast(msg, type='') {
   t.className = 'toast show ' + type;
   setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+
+// ═══════════════════════════════════════════════════════════════
+// AUTOSAVE SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════
+// AUTOSAVE SYSTEM - Multi-layer protection against data loss
+// ═══════════════════════════════════════════════════════════════
+
+const AUTOSAVE_CONFIG = {
+  localInterval: 30000,      // 30 sec - LocalStorage
+  indexedDBInterval: 120000, // 2 min - IndexedDB
+  cloudInterval: 300000,     // 5 min - Firebase (if online)
+  minChangeThreshold: 100    // Min 100 chars changed to trigger save
+};
+
+let lastSavedData = '';
+let lastSavedTime = 0;
+let saveTimers = {};
+let hasUnsavedChanges = false;
+
+// ─── PROJECT ID GENERATION ───
+function generateProjectId() {
+  const existing = localStorage.getItem('currentProjectId');
+  if (existing) return existing;
+  
+  const id = 'proj_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  localStorage.setItem('currentProjectId', id);
+  return id;
+}
+
+let currentProjectId = generateProjectId();
+
+// ─── GET ALL FORM DATA ───
+function getAllFormData() {
+  const data = {
+    // Chapter A - Project Details
+    insuredName: val('insuredName'),
+    insuredId: val('insuredId'),
+    insuredPhone: val('insuredPhone'),
+    insuredEmail: val('insuredEmail'),
+    propAddress: val('propAddress'),
+    insuredRelation: val('insuredRelation'),
+    
+    // Insurance Details
+    insuranceCompany: val('insuranceCompany'),
+    policyNum: val('policyNum'),
+    claimNum: val('claimNum'),
+    adjustorName: val('adjustorName'),
+    policyFrom: val('policyFrom'),
+    policyTo: val('policyTo'),
+    deductible: val('deductible'),
+    
+    // Dates
+    eventDate: val('eventDate'),
+    visitDate: val('visitDate'),
+    lastDocDate: val('lastDocDate'),
+    reportDate: val('reportDate'),
+    
+    // Appraiser
+    appraisalName: val('appraisalName'),
+    appraisalLicense: val('appraisalLicense'),
+    appraisalFirm: val('appraisalFirm'),
+    appraisalPhone: val('appraisalPhone'),
+    
+    // Event Type
+    selectedEvent: selectedEvent,
+    eventBrief: val('eventBrief'),
+    eventTime: val('eventTime'),
+    discoveryMethod: val('discoveryMethod'),
+    
+    // Property Details
+    propStreet: val('propStreet'),
+    propNum: val('propNum'),
+    propApt: val('propApt'),
+    propCity: val('propCity'),
+    propType: val('propType'),
+    propYear: val('propYear'),
+    propArea: val('propArea'),
+    propMaterial: val('propMaterial'),
+    
+    // Policy Details
+    selectedPolicyType: selectedPolicyType,
+    structureCoverageLimit: val('structureCoverageLimit'),
+    contentsCoverageLimit: val('contentsCoverageLimit'),
+    
+    // Damage Description
+    damagedAreas: getCheckedLabels('damagedAreas'),
+    damageTypes: getCheckedLabels('damageTypes'),
+    damageDescription: val('damageDescription'),
+    
+    // BOQ
+    boqSections: boqSections,
+    
+    // Photos
+    photos: photos,
+    
+    // Conclusions
+    causeConclusion: val('causeConclusion'),
+    repairPriority: val('repairPriority'),
+    appraisalDeclaration: val('appraisalDeclaration'),
+    
+    // Metadata
+    currentStep: currentStep,
+    lastModified: new Date().toISOString()
+  };
+  
+  return data;
+}
+
+// ─── RESTORE FORM DATA ───
+function restoreFormData(data) {
+  if (!data) return;
+  
+  // Set text inputs
+  Object.keys(data).forEach(key => {
+    const el = document.getElementById(key);
+    if (el && typeof data[key] === 'string') {
+      el.value = data[key];
+    }
+  });
+  
+  // Restore event type
+  if (data.selectedEvent) {
+    selectedEvent = data.selectedEvent;
+    const card = document.querySelector(`.event-card[onclick*="${data.selectedEvent}"]`);
+    if (card) card.classList.add('selected');
+  }
+  
+  // Restore policy type
+  if (data.selectedPolicyType) {
+    selectedPolicyType = data.selectedPolicyType;
+    const card = document.querySelector(`.policy-type-card[data-type="${data.selectedPolicyType}"]`);
+    if (card) card.classList.add('selected');
+  }
+  
+  // Restore checkboxes
+  if (data.damagedAreas) {
+    data.damagedAreas.forEach(area => {
+      const cb = Array.from(document.querySelectorAll('#damagedAreas .checkbox-item'))
+        .find(el => el.querySelector('.cb-label')?.textContent === area);
+      if (cb) cb.classList.add('checked');
+    });
+  }
+  
+  // Restore BOQ
+  if (data.boqSections && Array.isArray(data.boqSections)) {
+    boqSections = data.boqSections;
+    renderBoq();
+  }
+  
+  // Restore photos
+  if (data.photos && Array.isArray(data.photos)) {
+    photos = data.photos;
+  }
+  
+  // Go to last step
+  if (data.currentStep) {
+    goToStep(data.currentStep);
+  }
+  
+  // Trigger auto-fill functions
+  chapterALive();
+}
+
+// ─── LAYER 1: LOCALSTORAGE ───
+function saveToLocalStorage() {
+  try {
+    const data = getAllFormData();
+    const snapshot = {
+      id: currentProjectId,
+      timestamp: Date.now(),
+      data: data
+    };
+    localStorage.setItem('draft_current', JSON.stringify(snapshot));
+    lastSavedTime = Date.now();
+    hasUnsavedChanges = false;
+    updateSaveStatus('local', true);
+    return true;
+  } catch (err) {
+    console.error('LocalStorage save failed:', err);
+    updateSaveStatus('local', false, err.message);
+    return false;
+  }
+}
+
+function loadFromLocalStorage() {
+  try {
+    const saved = localStorage.getItem('draft_current');
+    if (!saved) return null;
+    return JSON.parse(saved);
+  } catch (err) {
+    console.error('LocalStorage load failed:', err);
+    return null;
+  }
+}
+
+// ─── LAYER 2: INDEXEDDB ───
+let db = null;
+
+async function initIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('YaronAppraiserDB', 1);
+    
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      db = request.result;
+      resolve(db);
+    };
+    
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains('drafts')) {
+        db.createObjectStore('drafts', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('history')) {
+        const historyStore = db.createObjectStore('history', { keyPath: 'timestamp' });
+        historyStore.createIndex('projectId', 'projectId', { unique: false });
+      }
+    };
+  });
+}
+
+async function saveToIndexedDB() {
+  if (!db) await initIndexedDB();
+  
+  try {
+    const data = getAllFormData();
+    const snapshot = {
+      id: currentProjectId,
+      timestamp: Date.now(),
+      data: data
+    };
+    
+    const transaction = db.transaction(['drafts'], 'readwrite');
+    const store = transaction.objectStore('drafts');
+    await store.put(snapshot);
+    
+    updateSaveStatus('indexeddb', true);
+    return true;
+  } catch (err) {
+    console.error('IndexedDB save failed:', err);
+    updateSaveStatus('indexeddb', false, err.message);
+    return false;
+  }
+}
+
+async function loadFromIndexedDB(projectId) {
+  if (!db) await initIndexedDB();
+  
+  try {
+    const transaction = db.transaction(['drafts'], 'readonly');
+    const store = transaction.objectStore('drafts');
+    const request = store.get(projectId || currentProjectId);
+    
+    return new Promise((resolve, reject) => {
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  } catch (err) {
+    console.error('IndexedDB load failed:', err);
+    return null;
+  }
+}
+
+// ─── CHANGE DETECTION ───
+function detectChanges() {
+  const currentData = JSON.stringify(getAllFormData());
+  const changed = currentData !== lastSavedData;
+  
+  if (changed) {
+    hasUnsavedChanges = true;
+    lastSavedData = currentData;
+  }
+  
+  return changed;
+}
+
+// ─── AUTO-SAVE ORCHESTRATOR ───
+function startAutoSave() {
+  // LocalStorage - every 30 sec
+  saveTimers.local = setInterval(() => {
+    if (hasUnsavedChanges) {
+      saveToLocalStorage();
+    }
+  }, AUTOSAVE_CONFIG.localInterval);
+  
+  // IndexedDB - every 2 min
+  saveTimers.indexedDB = setInterval(() => {
+    if (hasUnsavedChanges) {
+      saveToIndexedDB();
+    }
+  }, AUTOSAVE_CONFIG.indexedDBInterval);
+  
+  // Detect changes on any input
+  document.addEventListener('input', () => {
+    hasUnsavedChanges = true;
+  });
+  
+  document.addEventListener('change', () => {
+    hasUnsavedChanges = true;
+  });
+  
+  console.log('✅ AutoSave started');
+}
+
+// ─── PREVENT DATA LOSS ON CLOSE ───
+window.addEventListener('beforeunload', (e) => {
+  if (hasUnsavedChanges) {
+    e.preventDefault();
+    e.returnValue = 'יש לך שינויים שלא נשמרו. בטוח שאתה רוצה לצאת?';
+    
+    // Last-ditch save attempt
+    saveToLocalStorage();
+  }
+});
+
+// ─── SAVE STATUS UI ───
+function updateSaveStatus(layer, success, errorMsg = '') {
+  const statusEl = document.getElementById('saveStatus');
+  if (!statusEl) return;
+  
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+  
+  let icon = '💾';
+  let text = '';
+  let color = '#22c55e';
+  
+  if (layer === 'local') {
+    icon = success ? '💾' : '⚠️';
+    text = success ? `נשמר מקומית: ${timeStr}` : `שגיאה בשמירה מקומית`;
+    color = success ? '#22c55e' : '#ef4444';
+  } else if (layer === 'indexeddb') {
+    icon = success ? '💿' : '⚠️';
+    text = success ? `גיבוי: ${timeStr}` : `שגיאה בגיבוי`;
+  } else if (layer === 'cloud') {
+    icon = success ? '☁️' : '🔴';
+    text = success ? `סונכרן: ${timeStr}` : `לא מחובר לענן`;
+  }
+  
+  statusEl.innerHTML = `
+    <span style="color:${color}">${icon}</span>
+    <span style="font-size:0.8rem;color:var(--text-secondary)">${text}</span>
+  `;
+}
+
+// ─── MANUAL SAVE TRIGGER ───
+function manualSave() {
+  saveToLocalStorage();
+  saveToIndexedDB();
+  showToast('✓ נשמר בהצלחה', 'success');
+}
+
+// ─── EXPORT JSON ───
+function exportDraft() {
+  const data = getAllFormData();
+  const exportData = {
+    version: '1.0',
+    exportedAt: new Date().toISOString(),
+    projectId: currentProjectId,
+    data: data
+  };
+  
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `draft_${currentProjectId}_${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  
+  showToast('✓ קובץ גיבוי הורד', 'success');
+}
+
+// ─── IMPORT JSON ───
+function importDraft(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (imported.data) {
+        restoreFormData(imported.data);
+        currentProjectId = imported.projectId || generateProjectId();
+        showToast('✓ טיוטה נטענה בהצלחה', 'success');
+      }
+    } catch (err) {
+      showToast('✗ שגיאה בטעינת הקובץ', 'error');
+      console.error('Import failed:', err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+
+
+
+
+// ─── RECOVERY MODAL ───
+function showRecoveryModal(draft, minutesAgo) {
+  const timeText = minutesAgo < 60 
+    ? `לפני ${minutesAgo} דקות`
+    : `לפני ${Math.floor(minutesAgo / 60)} שעות`;
+    
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  `;
+  
+  modal.innerHTML = `
+    <div style="background:var(--card);border:2px solid var(--accent);border-radius:var(--radius);padding:2rem;max-width:500px;text-align:center">
+      <div style="font-size:3rem;margin-bottom:1rem">🔄</div>
+      <h2 style="color:var(--accent);margin-bottom:1rem">נמצאה טיוטה</h2>
+      <p style="color:var(--text-secondary);margin-bottom:1.5rem">
+        נמצאה טיוטה שנשמרה ${timeText}.<br>
+        האם ברצונך לשחזר אותה?
+      </p>
+      <div style="display:flex;gap:1rem;justify-content:center">
+        <button class="btn btn-primary" onclick="recoverDraft()" style="min-width:120px">
+          ✓ שחזר
+        </button>
+        <button class="btn btn-ghost" onclick="dismissRecovery()" style="min-width:120px">
+          ✗ התחל מחדש
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  window._recoveryModal = modal;
+  window._recoveryDraft = draft;
+}
+
+function recoverDraft() {
+  if (window._recoveryDraft && window._recoveryDraft.data) {
+    restoreFormData(window._recoveryDraft.data);
+    showToast('✓ טיוטה שוחזרה בהצלחה', 'success');
+  }
+  dismissRecovery();
+}
+
+function dismissRecovery() {
+  if (window._recoveryModal) {
+    window._recoveryModal.remove();
+    window._recoveryModal = null;
+    window._recoveryDraft = null;
+  }
+}
+
+// ─── DRAFT MENU ───
+function showDraftMenu() {
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  `;
+  
+  modal.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;max-width:600px;width:90%">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <h2 style="color:var(--accent)">📂 ניהול טיוטאות</h2>
+        <button onclick="closeDraftMenu()" style="background:none;border:none;font-size:1.5rem;color:var(--text-muted);cursor:pointer">×</button>
+      </div>
+      
+      <div style="display:grid;gap:1rem">
+        <button class="btn btn-ghost" onclick="exportDraft()" style="justify-content:flex-start">
+          📥 ייצוא גיבוי (JSON)
+        </button>
+        <button class="btn btn-ghost" onclick="triggerImport()" style="justify-content:flex-start">
+          📤 ייבוא מגיבוי
+        </button>
+        <button class="btn btn-ghost" onclick="newProject()" style="justify-content:flex-start">
+          ➕ פרויקט חדש
+        </button>
+        <hr style="border:none;border-top:1px solid var(--border)">
+        <div style="font-size:0.85rem;color:var(--text-muted);text-align:center">
+          מזהה פרויקט נוכחי: <code style="color:var(--accent)">${currentProjectId}</code>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  window._draftMenuModal = modal;
+}
+
+function closeDraftMenu() {
+  if (window._draftMenuModal) {
+    window._draftMenuModal.remove();
+    window._draftMenuModal = null;
+  }
+}
+
+function triggerImport() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = (e) => {
+    if (e.target.files[0]) {
+      importDraft(e.target.files[0]);
+      closeDraftMenu();
+    }
+  };
+  input.click();
+}
+
+function newProject() {
+  if (hasUnsavedChanges) {
+    if (!confirm('יש לך שינויים שלא נשמרו. להתחיל פרויקט חדש?')) {
+      return;
+    }
+  }
+  
+  // Clear current project
+  localStorage.removeItem('currentProjectId');
+  localStorage.removeItem('draft_current');
+  currentProjectId = generateProjectId();
+  
+  // Reset form
+  location.reload();
+}
+
+// ─── TOAST NOTIFICATIONS ───
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  const colors = {
+    success: '#22c55e',
+    error: '#ef4444',
+    warning: '#f59e0b',
+    info: '#3b82f6'
+  };
+  
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--card);
+    border: 2px solid ${colors[type] || colors.info};
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    z-index: 9999;
+    animation: slideIn 0.3s ease;
+    box-shadow: var(--shadow-lg);
+  `;
+  
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// Add animation styles if not present
+if (!document.getElementById('toast-animations')) {
+  const style = document.createElement('style');
+  style.id = 'toast-animations';
+  style.textContent = `
+    @keyframes slideIn {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(100px); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+
+
 </script>
 </body>
 </html>
