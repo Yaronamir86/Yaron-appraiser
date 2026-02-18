@@ -1554,9 +1554,22 @@
       <div class="card-header">
         <div class="card-header-icon" style="background:rgba(59,130,246,0.15)">📍</div>
         <h3>מיקום הנכס</h3>
-        <span class="badge badge-required">חובה</span>
+        <span class="badge" style="background:rgba(59,130,246,0.15);color:#3b82f6">מפרק א׳</span>
       </div>
       <div class="card-body">
+        <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:0.84rem;color:#60a5fa">
+          💡 שם המבוטח והכתובת ממולאים אוטומטית מפרק א׳. <a href="#" onclick="goToStep(1);return false" style="color:#3b82f6;text-decoration:underline">לחץ כאן לעדכון</a>
+        </div>
+        <div class="form-grid cols-2" style="margin-bottom:1rem">
+          <div class="form-group">
+            <label>שם המבוטח (מפרק א׳)</label>
+            <input type="text" id="propOwnerDisplay" readonly style="opacity:0.65;cursor:default;background:rgba(59,130,246,0.05);border-color:rgba(59,130,246,0.3)">
+          </div>
+          <div class="form-group">
+            <label>כתובת (מפרק א׳)</label>
+            <input type="text" id="propAddressDisplay" readonly style="opacity:0.65;cursor:default;background:rgba(59,130,246,0.05);border-color:rgba(59,130,246,0.3)">
+          </div>
+        </div>
         <div class="form-grid cols-3">
           <div class="form-group">
             <label>רחוב <span class="req">*</span></label>
@@ -1618,6 +1631,7 @@
             <label>חומר הבנייה</label>
             <select id="propMaterial">
               <option value="">בחר...</option>
+              <option>בנייה קונבנציונלית - בלוקים ובטון</option>
               <option>בטון וברזל</option>
               <option>לבנה מסורתית</option>
               <option>עץ</option>
@@ -1711,7 +1725,7 @@
           <div class="form-grid cols-3">
             <div class="form-group">
               <label>גבול כיסוי מבנה (₪) <span class="req">*</span></label>
-              <input type="number" id="structureCoverageLimit" placeholder="לדוגמה: 1,500,000" oninput="calcInsuranceAdequacy()">
+              <input type="text" id="structureCoverageLimit" placeholder="לדוגמה: 1,500,000" oninput="formatCurrency(this);calcInsuranceAdequacy()" inputmode="numeric">
             </div>
             <div class="form-group">
               <label>שווי מבנה להערכת שמאי (₪)</label>
@@ -1732,7 +1746,7 @@
           <div class="form-grid cols-3">
             <div class="form-group">
               <label>גבול כיסוי תכולה (₪) <span class="req">*</span></label>
-              <input type="number" id="contentsCoverageLimit" placeholder="לדוגמה: 200,000" oninput="calcInsuranceAdequacy()">
+              <input type="text" id="contentsCoverageLimit" placeholder="לדוגמה: 200,000" oninput="formatCurrency(this);calcInsuranceAdequacy()" inputmode="numeric">
             </div>
             <div class="form-group">
               <label>שווי תכולה מוערך (₪)</label>
@@ -2182,7 +2196,11 @@
         <div class="form-grid">
           <div class="form-group">
             <label>קביעת סיבת הנזק</label>
-            <textarea id="causeConclusion" placeholder="קביעה מקצועית לגבי הסיבה הישירה לנזק..."></textarea>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:8px">
+              <span>🤖 טקסט אוטומטי לפי סוג אירוע ונזקים</span>
+              <button type="button" onclick="generateCauseText()" style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#3b82f6;border-radius:99px;padding:2px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit">↺ צור טקסט</button>
+            </div>
+            <textarea id="causeConclusion" placeholder="לחץ על 'צור טקסט' למילוי אוטומטי, או כתוב ידנית..." style="min-height:120px"></textarea>
           </div>
           <div class="form-group">
             <label>נסיבות מחמירות / מקלות</label>
@@ -2211,7 +2229,11 @@
         <hr class="section-divider">
         <div class="form-group">
           <label>סדר עדיפויות לתיקון</label>
-          <textarea id="repairPriority" style="min-height:100px" placeholder="תאר את סדר העדיפויות המוצע לשיקום הנכס..."></textarea>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:8px">
+            <span>🤖 המלצות אוטומטיות לפי כתב הכמויות</span>
+            <button type="button" onclick="generateRecommendations()" style="background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e;border-radius:99px;padding:2px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit">↺ צור המלצות</button>
+          </div>
+          <textarea id="repairPriority" style="min-height:100px" placeholder="לחץ על 'צור המלצות' למילוי אוטומטי, או כתוב ידנית..."></textarea>
         </div>
         <div class="form-group mt-4" style="margin-top:1rem">
           <label>זמן שיקום משוער</label>
@@ -2400,6 +2422,11 @@ function chapterALive() {
          dedC ? 'תכולה: ' + fmtN(dedC) : '']
           .filter(Boolean).join(' | ')
       : '—');
+
+  // Update step 3 readonly displays
+  const d = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+  d('propOwnerDisplay', name);
+  d('propAddressDisplay', addr);
 
   // Auto-fill eventBrief (step 2)
   const ta = document.getElementById('eventBrief');
@@ -2659,6 +2686,10 @@ const BOQ_CATALOG = {
         { desc: 'אספקה והתקנת משקוף',            unit: "יח'",    qty: 0, price: 1450 },
         { desc: 'תיקוני טיח וצבע היקפי',        unit: "יח'",    qty: 0, price: 300  },
         { desc: 'החלפת ידיות ואביזרים',          unit: "יח'",    qty: 0, price: 180  },
+        { desc: 'החלפת דלתות מטבח',              unit: "יח'",    qty: 0, price: 450  },
+        { desc: 'החלפת גב מטבח קרמי',            unit: "מ'",     qty: 0, price: 180  },
+        { desc: 'החלפת משטח עבודה (שיש/קוריאן)', unit: "מ'",     qty: 0, price: 650  },
+        { desc: 'תיקון ציריים ומנגנונים',        unit: "קומפ'",  qty: 1, price: 450  },
       ]
     }
   ],
@@ -2845,7 +2876,8 @@ function addBoqSectionFromTemplate(template) {
       desc: item.desc,
       unit: item.unit,
       qty: item.qty || 0,
-      price: item.price || 0
+      price: item.price || 0,
+      isPct: item.isPct || false
     }))
   };
   boqSections.push(section);
@@ -2879,7 +2911,8 @@ function addBoqRow(sectionId, itemData) {
     desc: itemData?.desc || '',
     unit: itemData?.unit || "יח'",
     qty: itemData?.qty || 0,
-    price: itemData?.price || 0
+    price: itemData?.price || 0,
+    isPct: itemData?.isPct || false
   });
   renderBoq();
   // Reset the add-row select
@@ -3284,6 +3317,17 @@ function updateTotal() {
   if (sgLabel) sgLabel.textContent = cfg && uncoveredGross > 0 ? 'סה"כ נזק מכוסה' : 'סה"כ נזק גולמי';
 }
 
+// ====== NUMBER FORMATTER ======
+function formatCurrency(input) {
+  let val = input.value.replace(/[^\d]/g, ''); // remove all non-digits
+  if (val === '') {
+    input.value = '';
+    return;
+  }
+  const num = parseInt(val);
+  input.value = num.toLocaleString('he-IL');
+}
+
 // ====== INSURANCE ADEQUACY ======
 function calcBuildingCost() {
   const sqm = parseFloat(document.getElementById('propArea')?.value) || 0;
@@ -3306,7 +3350,7 @@ function calcInsuranceAdequacy() {
 
   // ── STRUCTURE COVERAGE ──────────────────────────────────────────────────
   if (cfg.structure) {
-    const limit     = parseFloat(document.getElementById('structureCoverageLimit')?.value)    || 0;
+    const limit     = parseFloat((document.getElementById('structureCoverageLimit')?.value || '').replace(/,/g, ''))    || 0;
     const appraised = parseFloat(document.getElementById('structureAppraisedValue')?.value)   || 0;
     const structBox = document.getElementById('structureAdequacyBox');
 
@@ -3376,7 +3420,7 @@ function calcInsuranceAdequacy() {
 
   // ── CONTENTS COVERAGE ───────────────────────────────────────────────────
   if (cfg.contents) {
-    const limit     = parseFloat(document.getElementById('contentsCoverageLimit')?.value)    || 0;
+    const limit     = parseFloat((document.getElementById('contentsCoverageLimit')?.value || '').replace(/,/g, ''))    || 0;
     const appraised = parseFloat(document.getElementById('contentsAppraisedValue')?.value)   || 0;
     const contBox   = document.getElementById('contentsAdequacyBox');
 
@@ -3503,8 +3547,119 @@ function getDamageRows() {
   return rows;
 }
 
+// ====== AUTO-GENERATE RECOMMENDATIONS ======
+function generateRecommendations() {
+  const boqData = getBoqData();
+  let recs = [];
+  
+  // Opening - always first
+  recs.push('🔧 סדר עדיפויות מומלץ לשיקום הנכס:\n');
+  
+  // Critical first steps
+  const hasDemolition = boqData.some(sec => 
+    sec.rows.some(r => r.desc.includes('פירוק') || r.desc.includes('פינוי'))
+  );
+  const hasWaterproofing = boqData.some(sec =>
+    sec.rows.some(r => r.desc.includes('איטום') || r.desc.includes('אינסטלציה'))
+  );
+  const hasElectrical = boqData.some(sec =>
+    sec.rows.some(r => r.desc.includes('חשמל') || r.desc.includes('לוח חשמל'))
+  );
+  
+  if (selectedEvent === 'water' || hasWaterproofing) {
+    recs.push('1️⃣ טיפול מיידי במקור הנזילה - תיקון מערכת האינסטלציה וביצוע איטום מקצועי.');
+  } else if (selectedEvent === 'fire') {
+    recs.push('1️⃣ בדיקת יציבות מבנית ואישור מהנדס קונסטרוקציה לפני תחילת עבודות.');
+  }
+  
+  if (hasDemolition) {
+    recs.push('2️⃣ פירוק מבוקר של כל החומרים הפגומים ופינוי לאתר מורשה.');
+  }
+  
+  if (hasWaterproofing) {
+    recs.push('3️⃣ ייבוש יסודי של כל שכבות המצע והקירות (זמן ייבוש מינימלי: 7-14 ימים).');
+  }
+  
+  if (hasElectrical) {
+    recs.push('4️⃣ בדיקת תקינות מערכת החשמל ע"י חשמלאי מוסמך לפני חיבור מחדש.');
+  }
+  
+  recs.push('5️⃣ ביצוע עבודות תשתית (טיח, איטום, צנרת, חשמל) לפי כתב הכמויות.');
+  recs.push('6️⃣ עבודות גמר (ריצוף, צביעה, נגרות) רק לאחר אישור שכבות התשתית.');
+  recs.push('7️⃣ ניקיון סופי ובדיקת קבלה.');
+  
+  recs.push('\n⚠️ הערות חשובות:');
+  recs.push('• טרם ביצוע תיקוני גמר נדרש טיפול יסודי במקור הנזק.');
+  recs.push('• מומלץ פיקוח הנדסי לאורך כל שלבי השיקום.');
+  recs.push('• יש לוודא תאימות החומרים והשיטות לתקנים הישראליים.');
+
+  const ta = document.getElementById('repairPriority');
+  if (ta) ta.value = recs.join('\n');
+}
+
+// ====== AUTO-GENERATE CAUSE TEXT ======
+function generateCauseText() {
+  const eventType = selectedEvent; // 'water', 'fire', 'break_in', etc.
+  const areas = getCheckedLabels('damagedAreas');
+  const damageTypes = Array.from(document.querySelectorAll('#step5 .checkbox-item.checked .cb-label'))
+    .map(el => el.textContent.trim());
+  
+  const templates = {
+    water: {
+      intro: 'בבדיקה במקום ובהתאם לדוח חברת איתור נזילות, נמצא כי מקור הנזק הינו כשל במערכת האינסטלציה.',
+      detail: 'הכשל גרם לחדירת מים מתמשכת אל שכבות המצע ולהיווצרות עליות קפילריות בשיפולי הקירות.',
+      spread: areas.length > 0 ? `הנזק התפשט ל${areas.join(', ')}.` : '',
+      type: 'מדובר בנזק מתמשך הנובע מכשל פנימי במערכת הדלוחין/אינסטלציה.'
+    },
+    fire: {
+      intro: 'בבדיקה במקום ובהתאם לדוח חוקר שריפות, נמצא כי מקור האש היה',
+      detail: 'השריפה גרמה לנזקי אש, עשן ופיח נרחבים.',
+      spread: areas.length > 0 ? `השריפה התפשטה ב${areas.join(', ')}.` : '',
+      type: 'מדובר באירוע חד-פעמי הנובע מאש גלויה.'
+    },
+    break_in: {
+      intro: 'בבדיקה במקום ובהתאם לדוח משטרת ישראל, נמצאו סימני פריצה.',
+      detail: 'הפריצה כללה פגיעה במשקופים, שבירת נגרות ונזקי ונדליזם.',
+      spread: areas.length > 0 ? `הפגיעה בוצעה ב${areas.join(', ')}.` : '',
+      type: 'מדובר בנזק מכוון הנובע מפריצה לרכוש.'
+    },
+    earthquake: {
+      intro: 'בבדיקה במקום לאחר רעידת האדמה, נמצאו נזקים קונסטרוקטיביים.',
+      detail: 'הרעידה גרמה לסדקים, התמוטטות חלקית ונזקים מבניים.',
+      spread: areas.length > 0 ? `הנזקים זוהו ב${areas.join(', ')}.` : '',
+      type: 'מדובר בנזק נרחב הנובע מכוח טבע.'
+    },
+    other: {
+      intro: 'בבדיקה במקום נמצא כי הנזק נגרם עקב',
+      detail: '',
+      spread: areas.length > 0 ? `הנזק כלל את האזורים: ${areas.join(', ')}.` : '',
+      type: ''
+    }
+  };
+
+  const tpl = templates[eventType] || templates.other;
+  let text = tpl.intro + '\n\n';
+  if (tpl.detail) text += tpl.detail + '\n';
+  if (tpl.spread) text += tpl.spread + '\n';
+  if (damageTypes.length > 0) {
+    text += `\nהנזק כלל: ${damageTypes.join(', ')}.`;
+  }
+  if (tpl.type) text += '\n\n' + tpl.type;
+  
+  text += '\n\nממצאי הבדיקה תואמים את סימני הנזק שנצפו במוקדי האירוע.';
+
+  const ta = document.getElementById('causeConclusion');
+  if (ta) ta.value = text;
+}
+
 // ====== BUILD REPORT ======
 function buildReport() {
+  console.log('🔍 Building report...');
+  console.log('Selected event:', selectedEvent);
+  console.log('Insured name:', val('insuredName'));
+  console.log('Policy num:', val('policyNum'));
+  console.log('BOQ sections:', boqSections.length);
+  
   const evLabels = {fire:'שריפה',water:'נזקי מים',break_in:'פריצה',earthquake:'רעידת אדמה',other:'אחר'};
   const evIcons = {fire:'🔥',water:'💧',break_in:'🔓',earthquake:'🌍',other:'📋'};
 
