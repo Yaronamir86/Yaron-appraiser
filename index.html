@@ -512,8 +512,15 @@
     display: flex;
     gap: 4px;
     margin-bottom: 1.5rem;
-    flex-wrap: wrap;
+    overflow-x: auto;
+    overflow-y: hidden;
     padding-bottom: 4px;
+    /* Hide scrollbar but keep functionality */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  .steps-nav::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
   }
   .step-pill {
     display: flex;
@@ -1455,14 +1462,19 @@
               </div>
               <div class="form-group">
                 <label>משך הנזילה</label>
-                <select id="waterDuration">
+                <select id="waterDuration" onchange="toggleWaterDurationOther(this)">
                   <option value="">בחר...</option>
                   <option>פחות משעה</option>
                   <option>מספר שעות</option>
                   <option>יממה</option>
                   <option>מספר ימים</option>
                   <option>לא ידוע</option>
+                  <option value="other">אחר</option>
                 </select>
+              </div>
+              <div class="form-group" id="waterDurationOtherGroup" style="display:none">
+                <label>פרט משך נזילה</label>
+                <input type="text" id="waterDurationOther" placeholder="תאר את משך הנזילה...">
               </div>
               <div class="form-group">
                 <label>גובה המים (בקירוב)</label>
@@ -1812,11 +1824,11 @@
             </div>
             <div class="form-group">
               <label>שווי מבנה להערכת שמאי (₪)</label>
-              <input type="number" id="structureAppraisedValue" placeholder="שווי שמאי" oninput="calcInsuranceAdequacy()">
+              <input type="text" id="structureAppraisedValue" placeholder="שווי שמאי" oninput="formatCurrency(this);calcInsuranceAdequacy()" inputmode="numeric">
             </div>
             <div class="form-group">
               <label>עלות בנייה למ"ר (₪)</label>
-              <input type="number" id="buildingCostPerSqm" placeholder="לדוגמה: 12,000" oninput="calcBuildingCost()">
+              <input type="text" id="buildingCostPerSqm" placeholder="לדוגמה: 12,000" oninput="formatCurrency(this);calcBuildingCost()" inputmode="numeric">
             </div>
           </div>
           <div id="structureAdequacyBox" style="display:none;margin-top:0.75rem"></div>
@@ -1833,7 +1845,7 @@
             </div>
             <div class="form-group">
               <label>שווי תכולה מוערך (₪)</label>
-              <input type="number" id="contentsAppraisedValue" placeholder="שווי מוערך" oninput="calcInsuranceAdequacy()">
+              <input type="text" id="contentsAppraisedValue" placeholder="שווי מוערך" oninput="formatCurrency(this);calcInsuranceAdequacy()" inputmode="numeric">
             </div>
             <div class="form-group">
               <label>בסיס פיצוי תכולה</label>
@@ -2597,6 +2609,15 @@ function updateDateConstraints() {
   
   const lDate = lastDocDate?.value || vDate;
   if (lDate && reportDate) reportDate.min = lDate;
+}
+
+function toggleWaterDurationOther(select) {
+  const otherGroup = document.getElementById('waterDurationOtherGroup');
+  if (select.value === 'other') {
+    otherGroup.style.display = 'block';
+  } else {
+    otherGroup.style.display = 'none';
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3769,7 +3790,7 @@ function formatCurrency(input) {
 // ====== INSURANCE ADEQUACY ======
 function calcBuildingCost() {
   const sqm = parseFloat(document.getElementById('propArea')?.value) || 0;
-  const costPerSqm = parseFloat(document.getElementById('buildingCostPerSqm')?.value) || 0;
+  const costPerSqm = parseFloat((document.getElementById('buildingCostPerSqm')?.value || '').replace(/,/g, '')) || 0;
   if (sqm && costPerSqm) {
     const calc = sqm * costPerSqm;
     const appraised = document.getElementById('structureAppraisedValue');
@@ -3789,7 +3810,7 @@ function calcInsuranceAdequacy() {
   // ── STRUCTURE COVERAGE ──────────────────────────────────────────────────
   if (cfg.structure) {
     const limit     = parseFloat((document.getElementById('structureCoverageLimit')?.value || '').replace(/,/g, ''))    || 0;
-    const appraised = parseFloat(document.getElementById('structureAppraisedValue')?.value)   || 0;
+    const appraised = parseFloat((document.getElementById('structureAppraisedValue')?.value || '').replace(/,/g, ''))   || 0;
     const structBox = document.getElementById('structureAdequacyBox');
 
     if (limit > 0 && appraised > 0) {
@@ -3859,7 +3880,7 @@ function calcInsuranceAdequacy() {
   // ── CONTENTS COVERAGE ───────────────────────────────────────────────────
   if (cfg.contents) {
     const limit     = parseFloat((document.getElementById('contentsCoverageLimit')?.value || '').replace(/,/g, ''))    || 0;
-    const appraised = parseFloat(document.getElementById('contentsAppraisedValue')?.value)   || 0;
+    const appraised = parseFloat((document.getElementById('contentsAppraisedValue')?.value || '').replace(/,/g, ''))   || 0;
     const contBox   = document.getElementById('contentsAdequacyBox');
 
     if (limit > 0 && appraised > 0) {
@@ -4294,7 +4315,15 @@ function buildReport() {
       <dt>גבול כיסוי תכולה</dt><dd>${val('contentsCoverageLimit') ? fmtM(parseFloat(val('contentsCoverageLimit'))) : '—'}</dd>
       <dt>השתתפות עצמית מבנה</dt><dd>${val('policyDeductibleStructure') || '—'}</dd>
       <dt>השתתפות עצמית תכולה</dt><dd>${val('policyDeductibleContents') || '—'}</dd>
-      <dt>בסיס פיצוי תכולה</dt><dd>${val('contentsCompensationBasis') || '—'}</dd>
+      <dt>בסיס פיצוי תכולה</dt><dd>${(() => {
+        const basis = val('contentsCompensationBasis');
+        const map = {
+          'replacement': 'ערך כינון (חדש תחת ישן)',
+          'actual': 'ערך בפועל (בניכוי פחת)',
+          'agreed': 'ערך מוסכם'
+        };
+        return map[basis] || basis || '—';
+      })()}</dd>
     </dl>
     ${extensions.length ? `<p><strong>הרחבות פעילות:</strong> ${extensions.join(' • ')}</p>` : ''}
 
@@ -4333,6 +4362,11 @@ function buildReport() {
     ${areas.length ? `<p><strong>אזורים שנפגעו:</strong> ${areas.join(', ')}</p>` : ''}
     ${getRadioValue('damageSeverity') ? `<p><strong>חומרת הנזק:</strong> ${getRadioValue('damageSeverity')}</p>` : ''}
     ${val('damageDescription') ? `<p style="white-space:pre-line">${val('damageDescription')}</p>` : ''}
+
+    ${val('causeConclusion') ? `
+    <h2>🔎 קביעת סיבת הנזק</h2>
+    <p style="white-space:pre-line">${val('causeConclusion')}</p>
+    ` : ''}
 
     <h2>💰 כתב כמויות ותמחור</h2>
     ${(() => {
@@ -4430,7 +4464,6 @@ function buildReport() {
 
     <h2>⚖️ מסקנות ושיקולים</h2>
     ${coverageDecision ? `<p><strong>קביעת כיסוי:</strong> ${coverageDecision}</p>` : ''}
-    ${val('causeConclusion') ? `<p><strong>קביעת סיבת הנזק:</strong> ${val('causeConclusion')}</p>` : ''}
     ${val('circumstances') ? `<p><strong>נסיבות מחמירות / מקלות:</strong> ${val('circumstances')}</p>` : ''}
     ${val('repairPriority') ? `<p><strong>המלצות לשיקום:</strong> ${val('repairPriority')}</p>` : ''}
     ${repairTime ? `<p><strong>זמן שיקום משוער:</strong> ${repairTime}</p>` : ''}
