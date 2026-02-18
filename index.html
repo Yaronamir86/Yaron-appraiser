@@ -2,8 +2,8 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>מערכת חוות דעת שמאי רכוש</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ירון אמיר | מערכת חוות דעת שמאי רכוש</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -872,33 +872,34 @@
     .damage-item { grid-template-columns: 1fr 1fr; }
     .photo-grid { grid-template-columns: repeat(3, 1fr); }
     .main { padding: 1rem; }
+  
+    /* Summary / conclusion box (3 cols -> stacked) */
+    .conclusion-box > div { grid-template-columns: 1fr !important; }
+    .amount-display { font-size: 1.7rem; text-align: center; }
+    .conclusion-box h3 { text-align: center; }
+
+    /* Report preview (final form) */
+    .report-preview { padding: 1rem; }
+    .report-preview .rp-meta { grid-template-columns: 1fr; }
+    .report-preview table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .report-preview th, .report-preview td { white-space: nowrap; }
+    .report-preview .rp-signature { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    .report-preview .sig-box { width: 100%; max-width: 260px; }
+
   }
 
-/* ====== MOBILE HARDENING (added) ====== */
-html, body { width: 100%; overflow-x: hidden; }
-.header-inner, .main { width: 100%; }
-.header { padding: 0 1rem; }
-.header-inner { padding: 0.75rem 0; height: auto; gap: 0.75rem; flex-wrap: wrap; }
-.header-actions { width: 100%; display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
-.header-actions .btn { flex: 1 1 140px; }
-.steps-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 0.25rem; }
-.step-pill { white-space: nowrap; flex: 0 0 auto; }
-.report-preview { overflow-x: auto; }
-table { display: block; overflow-x: auto; width: 100%; }
+/* === Mobile layout override (strong) === */
 @media (max-width: 768px) {
-  .main { padding: 1rem; }
-  .card { padding: 1rem; }
-  .form-grid { grid-template-columns: 1fr !important; }
-  .form-grid.cols-2, .form-grid.cols-3 { grid-template-columns: 1fr !important; }
-  .event-types { grid-template-columns: 1fr 1fr; }
-  .damage-item { grid-template-columns: 1fr !important; }
-  .photo-grid { grid-template-columns: repeat(2, 1fr); }
-  .step-header h2 { font-size: 1.1rem; }
-  .progress-wrap { flex-direction: column; align-items: stretch; gap: 0.5rem; }
-}
-@media (max-width: 420px) {
-  .event-types { grid-template-columns: 1fr; }
-  .photo-grid { grid-template-columns: 1fr; }
+  body { font-size: 15px; }
+  .header { padding: 0 1rem !important; }
+  .header-inner { height: auto !important; padding: 0.75rem 0 !important; flex-direction: column !important; align-items: center !important; gap: 0.75rem !important; }
+  .logo { justify-content: center !important; }
+  .header-actions { width: 100% !important; display: flex !important; flex-direction: column !important; gap: 0.75rem !important; }
+  .header-actions .btn { width: 100% !important; justify-content: center !important; }
+  .steps-nav { display: flex !important; gap: 0.5rem !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 0.5rem !important; }
+  .step-pill { flex: 0 0 auto !important; white-space: nowrap !important; }
+  .progress-card, .card { padding: 1rem !important; }
+  .form-grid, .form-grid.cols-3, .damage-item { grid-template-columns: 1fr !important; }
 }
 
 </style>
@@ -2189,6 +2190,15 @@ table { display: block; overflow-x: auto; width: 100%; }
 <div class="toast" id="toast"></div>
 
 <script>
+
+  // ====== APPRAISER PROFILE (defaults) ======
+  const APPRAISER = {
+    name: 'ירון אמיר',
+    role: 'שמאי רכוש',
+    phone: '050-329-2066',
+    email: 'yaronamir86@gmail.com'
+  };
+
 let currentStep = 1;
 const totalSteps = 9;
 let selectedEvent = null;
@@ -3428,7 +3438,9 @@ function buildReport() {
 
     <h2>🗂️ פרטי הדוח</h2>
     <dl class="rp-meta">
-      <dt>שמאי מדווח</dt><dd>ירון אמיר</dd>
+      <dt>שמאי מדווח</dt><dd>${APPRAISER.name}</dd>
+      <dt>טלפון</dt><dd>${APPRAISER.phone}</dd>
+      <dt>דוא"ל</dt><dd>${APPRAISER.email}</dd>
       <dt>מספר רישיון</dt><dd>${val('appraisalLicense') || 'יעודכן בקרוב'}</dd>
       <dt>חברת שמאות</dt><dd>${val('appraisalFirm') || '—'}</dd>
       <dt>תאריך ביקור</dt><dd>${visitDateFmt}</dd>
@@ -3711,8 +3723,7 @@ function downloadHtmlReport() {
 </style>
 </head><body>${reportContent}</body></html>`;
 
-  const safeHtml = String(fullHtml).replace(/<\/script/gi,'<\/script');
-  const blob = new Blob([safeHtml], { type: 'text/html;charset=utf-8' });
+  const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `חוות-דעת-שמאי-${insuredName}-${dateStr}.html`;
