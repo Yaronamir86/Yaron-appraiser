@@ -512,7 +512,7 @@
     display: flex;
     gap: 4px;
     margin-bottom: 1.5rem;
-    overflow-x: auto;
+    flex-wrap: wrap;
     padding-bottom: 4px;
   }
   .step-pill {
@@ -1183,20 +1183,20 @@
         <div class="form-grid">
           <div class="form-group">
             <label>תאריך קרות המקרה <span class="req">*</span></label>
-            <input type="date" id="eventDate" oninput="chapterALive()">
+            <input type="date" id="eventDate" oninput="chapterALive();updateDateConstraints()">
           </div>
           <div class="form-group">
             <label>תאריך ביקור בנכס <span class="req">*</span></label>
-            <input type="date" id="visitDate" oninput="chapterALive();refreshDeclaration()">
+            <input type="date" id="visitDate" oninput="chapterALive();refreshDeclaration();updateDateConstraints()">
           </div>
           <div class="form-group">
             <label>תאריך קבלת מסמך אחרון</label>
-            <input type="date" id="lastDocDate">
+            <input type="date" id="lastDocDate" oninput="updateDateConstraints()">
             <span class="text-sm text-muted" style="margin-top:4px;display:block">מסמך אחרון שהתקבל מחברת הביטוח</span>
           </div>
           <div class="form-group">
             <label>תאריך יצירת הדוח</label>
-            <input type="date" id="reportDate">
+            <input type="date" id="reportDate" oninput="updateDateConstraints()">
             <span class="text-sm text-muted" style="margin-top:4px;display:block">ברירת מחדל: תאריך היום</span>
           </div>
         </div>
@@ -1394,6 +1394,44 @@
                 <div class="radio-btn" onclick="selectRadio(this,'fireFighters')">לא</div>
               </div>
             </div>
+            
+            <!-- PROFESSIONAL CHECKS -->
+            <hr class="divider">
+            <p class="text-sm text-muted mb-3" style="font-weight:600;color:var(--accent)">🔍 בדיקות מקצועיות וגורמים מעורבים</p>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>האם הוזמן חוקר שריפות?</label>
+                <div class="radio-group" id="fireInvestigatorOrdered">
+                  <div class="radio-btn" onclick="selectRadio(this,'fireInvestigatorOrdered')">כן</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireInvestigatorOrdered')">לא</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireInvestigatorOrdered')">בתהליך</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>שם החוקר / חברה</label>
+                <input type="text" id="fireInvestigatorName" placeholder="שם החוקר או החברה">
+              </div>
+              <div class="form-group">
+                <label>האם הוגש דוח חוקר?</label>
+                <div class="radio-group" id="fireInvestigatorReport">
+                  <div class="radio-btn" onclick="selectRadio(this,'fireInvestigatorReport')">כן - הוגש</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireInvestigatorReport')">בתהליך</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireInvestigatorReport')">לא</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>האם נדרש קונסטרוקטור?</label>
+                <div class="radio-group" id="fireConstructorNeeded">
+                  <div class="radio-btn" onclick="selectRadio(this,'fireConstructorNeeded')">כן - נדרש</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireConstructorNeeded')">לא נדרש</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'fireConstructorNeeded')">לא ברור עדיין</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>שם קונסטרוקטור (אם הוזמן)</label>
+                <input type="text" id="fireConstructorName" placeholder="שם המהנדס">
+              </div>
+            </div>
           </div>
 
           <!-- WATER SPECIFIC -->
@@ -1448,6 +1486,44 @@
               <div class="form-group">
                 <label>קומת הנכס שנפגע</label>
                 <input type="text" id="waterFloor" placeholder="לדוגמה: קומה 3">
+              </div>
+            </div>
+            
+            <!-- PROFESSIONAL CHECKS -->
+            <hr class="divider">
+            <p class="text-sm text-muted mb-3" style="font-weight:600;color:var(--accent)">🔍 בדיקות מקצועיות וגורמים מעורבים</p>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>האם הוזמן מאתר נזילות?</label>
+                <div class="radio-group" id="leakDetectorOrdered">
+                  <div class="radio-btn" onclick="selectRadio(this,'leakDetectorOrdered')">כן</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'leakDetectorOrdered')">לא</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'leakDetectorOrdered')">בתהליך</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>שם חברת איתור</label>
+                <input type="text" id="leakDetectorCompany" placeholder="שם החברה">
+              </div>
+              <div class="form-group">
+                <label>האם הוגש דוח איתור?</label>
+                <div class="radio-group" id="leakDetectorReport">
+                  <div class="radio-btn" onclick="selectRadio(this,'leakDetectorReport')">כן - הוגש</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'leakDetectorReport')">בתהליך</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'leakDetectorReport')">לא</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>שרברב שטיפל בתיקון</label>
+                <div class="radio-group" id="plumberType">
+                  <div class="radio-btn" onclick="selectRadio(this,'plumberType')">הסדר</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'plumberType')">פרטי</div>
+                  <div class="radio-btn" onclick="selectRadio(this,'plumberType')">טרם הוזמן</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>שם השרברב / חברה</label>
+                <input type="text" id="plumberName" placeholder="שם השרברב">
               </div>
             </div>
           </div>
@@ -2490,6 +2566,7 @@ function chapterALive() {
   const d = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
   d('propOwnerDisplay', name);
   d('propAddressDisplay', addr);
+  d('eventDate_display', evDate); // Sync step 2 event date display
 
   // Auto-fill eventBrief (step 2)
   const ta = document.getElementById('eventBrief');
@@ -2501,6 +2578,26 @@ function chapterALive() {
 
 // Legacy alias used in some places
 function autoFillFromInsured() { chapterALive(); }
+
+// ====== DATE CONSTRAINTS ======
+function updateDateConstraints() {
+  const eventDate = document.getElementById('eventDate')?.value;
+  const visitDate = document.getElementById('visitDate');
+  const lastDocDate = document.getElementById('lastDocDate');
+  const reportDate = document.getElementById('reportDate');
+  
+  if (eventDate) {
+    if (visitDate) visitDate.min = eventDate;
+    if (lastDocDate) lastDocDate.min = eventDate;
+    if (reportDate) reportDate.min = eventDate;
+  }
+  
+  const vDate = visitDate?.value;
+  if (vDate && lastDocDate) lastDocDate.min = vDate;
+  
+  const lDate = lastDocDate?.value || vDate;
+  if (lDate && reportDate) reportDate.min = lDate;
+}
 
 // ═══════════════════════════════════════════════════════════════
 // AUTOSAVE FUNCTIONS
