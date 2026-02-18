@@ -2,8 +2,8 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ירון אמיר | מערכת חוות דעת שמאי רכוש</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מערכת חוות דעת – ירון אמיר שמאי רכוש</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -851,6 +851,109 @@
   .boq-sum-row.grand .sr-label { color: var(--accent); font-weight: 700; }
   .boq-sum-row.grand .sr-amount { color: var(--accent); font-size: 1rem; }
 
+  /* ====== DAMAGE ASSESSMENT TABS ====== */
+  .damage-tabs { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .damage-tab {
+    padding: 10px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-size: 0.87rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .damage-tab:hover { border-color: var(--border-light); background: var(--card); }
+  .damage-tab.active {
+    background: var(--card);
+    border-color: var(--accent);
+    color: var(--accent);
+    border-bottom-color: var(--card);
+  }
+  .damage-tab-content { background: var(--card); border: 1.5px solid var(--border); border-radius: 0 var(--radius-sm) var(--radius-sm) var(--radius-sm); padding: 1.25rem; min-height: 200px; }
+  .damage-tab-panel { display: none; }
+  .damage-tab-panel.active { display: block; }
+  
+  .damage-detail-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+  }
+  .damage-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.02);
+    transition: background 0.15s;
+  }
+  .damage-detail-header:hover { background: rgba(255,255,255,0.04); }
+  .damage-detail-header .icon { font-size: 1.1rem; }
+  .damage-detail-header .label { flex: 1; font-size: 0.88rem; font-weight: 600; }
+  .damage-detail-header .toggle { font-size: 0.75rem; color: var(--text-muted); transition: transform 0.2s; }
+  .damage-detail-section.open .toggle { transform: rotate(180deg); }
+  .damage-detail-body {
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .damage-detail-section.open .damage-detail-body { display: block; }
+  .damage-sub-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    margin: 3px 0;
+    border-radius: 6px;
+    font-size: 0.84rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .damage-sub-checkbox:hover { background: rgba(255,255,255,0.03); }
+  .damage-sub-checkbox input[type="checkbox"] { cursor: pointer; }
+
+  .contents-item {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+  }
+  .contents-item input, .contents-item textarea {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 6px 8px;
+    color: var(--text-primary);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .contents-item input:hover, .contents-item textarea:hover { border-color: var(--border-light); background: rgba(255,255,255,0.02); }
+  .contents-item input:focus, .contents-item textarea:focus { border-color: var(--accent); background: rgba(212,168,83,0.05); }
+  .contents-item textarea { resize: vertical; min-height: 36px; }
+  .contents-item .del-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .contents-item .del-btn:hover { background: rgba(239,68,68,0.15); color: var(--danger); }
+
   .hidden { display: none !important; }
   .flex { display: flex; }
   .items-center { align-items: center; }
@@ -872,56 +975,7 @@
     .damage-item { grid-template-columns: 1fr 1fr; }
     .photo-grid { grid-template-columns: repeat(3, 1fr); }
     .main { padding: 1rem; }
-  
-    /* Summary / conclusion box (3 cols -> stacked) */
-    .conclusion-box > div { grid-template-columns: 1fr !important; }
-    .amount-display { font-size: 1.7rem; text-align: center; }
-    .conclusion-box h3 { text-align: center; }
-
-    /* Report preview (final form) */
-    .report-preview { padding: 1rem; }
-    .report-preview .rp-meta { grid-template-columns: 1fr; }
-    .report-preview table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .report-preview th, .report-preview td { white-space: nowrap; }
-    .report-preview .rp-signature { flex-direction: column; gap: 1rem; align-items: flex-start; }
-    .report-preview .sig-box { width: 100%; max-width: 260px; }
-
   }
-
-/* === Mobile layout override (strong) === */
-@media (max-width: 768px) {
-  body { font-size: 15px; }
-  .header { padding: 0 1rem !important; }
-  .header-inner { height: auto !important; padding: 0.75rem 0 !important; flex-direction: column !important; align-items: center !important; gap: 0.75rem !important; }
-  .logo { justify-content: center !important; }
-  .header-actions { width: 100% !important; display: flex !important; flex-direction: column !important; gap: 0.75rem !important; }
-  .header-actions .btn { width: 100% !important; justify-content: center !important; }
-  .steps-nav { display: flex !important; gap: 0.5rem !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 0.5rem !important; }
-  .step-pill { flex: 0 0 auto !important; white-space: nowrap !important; }
-  .progress-card, .card { padding: 1rem !important; }
-  .form-grid, .form-grid.cols-3, .damage-item { grid-template-columns: 1fr !important; }
-}
-/* Hide horizontal scrollbar in steps nav (keeps swipe/scroll working) */
-.steps-nav{
-  overflow-x: auto;
-  scrollbar-width: none;      /* Firefox */
-  -ms-overflow-style: none;   /* IE/Edge legacy */
-}
-.steps-nav::-webkit-scrollbar{
-  display: none;              /* Chrome/Safari */
-  height: 0;
-}
-/* Desktop: wrap pills instead of horizontal scrolling */
-@media (min-width: 900px){
-  .steps-nav{
-    overflow-x: visible;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-  .step-pill{ flex: 0 0 auto; }
-}
-
 </style>
 </head>
 <body>
@@ -929,10 +983,10 @@
 <div class="header">
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-icon">🏛️</div>
+      <div class="logo-icon" style="background:linear-gradient(135deg, #d4a853, #b8892f);width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:18px;color:#0f1419;box-shadow:0 2px 12px rgba(212,168,83,0.25)">י״א</div>
       <div>
         <div class="logo-text">ירון אמיר</div>
-        <span class="logo-sub">מערכת חוות דעת שמאי רכוש</span>
+        <span class="logo-sub">שמאי רכוש מוסמך</span>
       </div>
     </div>
     <div class="header-actions">
@@ -984,36 +1038,41 @@
     <span class="progress-pct" id="progPct">13%</span>
   </div>
 
-  <!-- ============ STEP 1: INSURED DETAILS ============ -->
+  <!-- ============ STEP 1: CHAPTER A – ALL BASIC DETAILS ============ -->
   <div id="step1" class="step-content">
     <div class="step-header">
-      <h2>👤 פרטי המבוטח</h2>
-      <p>מלא את פרטי המבוטח — הם ישמשו לאוטומציה בשאר הטופס.</p>
+      <h2>📁 פרק א׳ – פרטי הפרויקט</h2>
+      <p>מלא את כל הנתונים הבסיסיים — הם יזרמו אוטומטית לכל שאר הטופס והדוח.</p>
     </div>
 
+    <!-- ═══ 1. INSURED ═══ -->
     <div class="card">
       <div class="card-header">
         <div class="card-header-icon" style="background:rgba(168,85,247,0.15)">👤</div>
-        <h3>פרטים אישיים</h3>
+        <h3>פרטי המבוטח</h3>
         <span class="badge badge-required">חובה</span>
       </div>
       <div class="card-body">
         <div class="form-grid">
           <div class="form-group">
             <label>שם מלא <span class="req">*</span></label>
-            <input type="text" id="insuredName" placeholder="שם מלא" oninput="autoFillFromInsured()">
+            <input type="text" id="insuredName" placeholder="שם מלא" oninput="chapterALive()">
           </div>
           <div class="form-group">
             <label>מספר ת.ז. / ח.פ. <span class="req">*</span></label>
-            <input type="text" id="insuredId" placeholder="ת.ז. / ח.פ." oninput="autoFillFromInsured()">
+            <input type="text" id="insuredId" placeholder="ת.ז. / ח.פ." oninput="chapterALive()">
           </div>
           <div class="form-group">
             <label>טלפון</label>
-            <input type="text" id="insuredPhone" placeholder="מספר טלפון">
+            <input type="text" id="insuredPhone" placeholder="050-0000000" inputmode="tel">
           </div>
           <div class="form-group">
             <label>דוא"ל</label>
-            <input type="text" id="insuredEmail" placeholder="כתובת דוא״ל">
+            <input type="text" id="insuredEmail" placeholder="name@email.com" inputmode="email" style="direction:ltr;text-align:right" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label>כתובת הנכס <span class="req">*</span></label>
+            <input type="text" id="propAddress" placeholder="רחוב, מספר, עיר" oninput="chapterALive()">
           </div>
           <div class="form-group">
             <label>קשר לנכס</label>
@@ -1026,6 +1085,161 @@
             </select>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ═══ 2. POLICY ═══ -->
+    <div class="card" style="margin-top:1rem">
+      <div class="card-header">
+        <div class="card-header-icon" style="background:rgba(212,168,83,0.15)">🛡️</div>
+        <h3>פרטי הפוליסה</h3>
+        <span class="badge badge-required">חובה</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>חברת ביטוח <span class="req">*</span></label>
+            <select id="insuranceCompany" onchange="chapterALive()">
+              <option value="">בחר...</option>
+              <option>הפניקס</option>
+              <option>כלל ביטוח</option>
+              <option>מגדל</option>
+              <option>הראל</option>
+              <option>מנורה מבטחים</option>
+              <option>איילון</option>
+              <option>AIG</option>
+              <option>שירביט</option>
+              <option>הכשרה</option>
+              <option>אחר</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>מספר פוליסה <span class="req">*</span></label>
+            <input type="text" id="policyNum" placeholder="מספר פוליסה" oninput="chapterALive()">
+          </div>
+          <div class="form-group">
+            <label>מספר תביעה</label>
+            <input type="text" id="claimNum" placeholder="מספר תביעה">
+          </div>
+          <div class="form-group">
+            <label>שמאי ממונה מטעם חברה</label>
+            <input type="text" id="adjustorName" placeholder="שם השמאי">
+          </div>
+        </div>
+
+        <hr class="divider" style="margin:1rem 0">
+
+        <div style="font-size:0.82rem;font-weight:700;color:var(--text-muted);margin-bottom:0.75rem;letter-spacing:0.03em">📅 תקופת הביטוח</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>מתאריך</label>
+            <input type="date" id="policyFrom">
+          </div>
+          <div class="form-group">
+            <label>עד תאריך</label>
+            <input type="date" id="policyTo">
+          </div>
+        </div>
+
+        <hr class="divider" style="margin:1rem 0">
+
+        <div style="font-size:0.82rem;font-weight:700;color:var(--text-muted);margin-bottom:0.75rem;letter-spacing:0.03em">💰 השתתפות עצמית</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>השתתפות עצמית – מבנה (₪)</label>
+            <input type="number" id="deductible" placeholder="0" min="0" oninput="updateBoqTotal()">
+          </div>
+          <div class="form-group">
+            <label>השתתפות עצמית – תכולה (₪)</label>
+            <input type="number" id="deductibleContents" placeholder="0" min="0" oninput="updateBoqTotal()">
+          </div>
+          <div class="form-group">
+            <label>סוג השתתפות עצמית</label>
+            <select id="deductibleType">
+              <option value="">—</option>
+              <option>סכום קבוע</option>
+              <option>אחוז מהנזק</option>
+              <option>הגבוה מביניהם</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 3. KEY DATES ═══ -->
+    <div class="card" style="margin-top:1rem;border-color:rgba(59,130,246,0.3)">
+      <div class="card-header" style="background:rgba(59,130,246,0.04)">
+        <div class="card-header-icon" style="background:rgba(59,130,246,0.15)">📅</div>
+        <h3>תאריכים מרכזיים</h3>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>תאריך קרות המקרה <span class="req">*</span></label>
+            <input type="date" id="eventDate" oninput="chapterALive()">
+          </div>
+          <div class="form-group">
+            <label>תאריך ביקור בנכס <span class="req">*</span></label>
+            <input type="date" id="visitDate" oninput="chapterALive();refreshDeclaration()">
+          </div>
+          <div class="form-group">
+            <label>תאריך קבלת מסמך אחרון</label>
+            <input type="date" id="lastDocDate">
+            <span class="text-sm text-muted" style="margin-top:4px;display:block">מסמך אחרון שהתקבל מחברת הביטוח</span>
+          </div>
+          <div class="form-group">
+            <label>תאריך יצירת הדוח</label>
+            <input type="date" id="reportDate">
+            <span class="text-sm text-muted" style="margin-top:4px;display:block">ברירת מחדל: תאריך היום</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 4. APPRAISER ═══ -->
+    <div class="card" style="margin-top:1rem;border-color:rgba(212,168,83,0.3)">
+      <div class="card-header" style="background:rgba(212,168,83,0.04)">
+        <div class="card-header-icon" style="background:rgba(212,168,83,0.15)">🏛️</div>
+        <h3>פרטי השמאי המדווח</h3>
+        <span class="badge" style="background:rgba(212,168,83,0.15);color:var(--accent)">🔒 קבוע</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>שם השמאי</label>
+            <input type="text" id="appraisalName" value="ירון אמיר"
+              style="opacity:0.75;cursor:default;background:rgba(212,168,83,0.05);border-color:rgba(212,168,83,0.3)">
+          </div>
+          <div class="form-group">
+            <label>מספר רישיון</label>
+            <input type="text" id="appraisalLicense" placeholder="מס׳ רישיון" style="direction:ltr">
+          </div>
+          <div class="form-group">
+            <label>שם חברת השמאות</label>
+            <input type="text" id="appraisalFirm" placeholder="חברת שמאות">
+          </div>
+          <div class="form-group">
+            <label>טלפון משרד</label>
+            <input type="text" id="appraisalPhone" placeholder="03-0000000" inputmode="tel">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ LIVE SUMMARY ═══ -->
+    <div id="chapterASummary" style="margin-top:1.25rem;background:rgba(212,168,83,0.06);border:1px solid rgba(212,168,83,0.25);border-radius:var(--radius);padding:1rem 1.25rem">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--accent);margin-bottom:0.6rem;letter-spacing:0.04em">📋 תצוגה מקדימה – פרק א׳</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;font-size:0.82rem;color:var(--text-secondary);line-height:1.8" id="chapterAGrid">
+        <div>👤 מבוטח: <strong id="s_name" style="color:var(--text-primary)">—</strong></div>
+        <div>🪪 ת.ז: <strong id="s_id" style="color:var(--text-primary)">—</strong></div>
+        <div>🏠 נכס: <strong id="s_addr" style="color:var(--text-primary)">—</strong></div>
+        <div>🛡️ חברה: <strong id="s_company" style="color:var(--text-primary)">—</strong></div>
+        <div>📄 פוליסה: <strong id="s_policy" style="color:var(--text-primary)">—</strong></div>
+        <div>📋 תביעה: <strong id="s_claim" style="color:var(--text-primary)">—</strong></div>
+        <div>⚡ תאריך אירוע: <strong id="s_event" style="color:var(--text-primary)">—</strong></div>
+        <div>🔍 תאריך ביקור: <strong id="s_visit" style="color:var(--text-primary)">—</strong></div>
+        <div>📅 תקופת ביטוח: <strong id="s_period" style="color:var(--text-primary)">—</strong></div>
+        <div>💰 השתתפות עצמית: <strong id="s_ded" style="color:var(--text-primary)">—</strong></div>
       </div>
     </div>
 
@@ -1081,8 +1295,11 @@
         <div class="card-body">
           <div class="form-grid">
             <div class="form-group">
-              <label>תאריך האירוע <span class="req">*</span></label>
-              <input type="date" id="eventDate" required oninput="autoFillFromInsured()">
+              <label>תאריך האירוע</label>
+              <input type="date" id="eventDate_display" readonly
+                style="opacity:0.65;cursor:default;background:rgba(59,130,246,0.05);border-color:rgba(59,130,246,0.3)"
+                title="תאריך מוזן בפרק א׳">
+              <span class="text-sm text-muted" style="display:block;margin-top:3px">⬅ מוזן בפרק א׳ — <a href="#" onclick="goToStep(1);return false" style="color:var(--accent)">לעדכון</a></span>
             </div>
             <div class="form-group">
               <label>שעת האירוע</label>
@@ -1440,44 +1657,6 @@
       <p>פרטי חברת הביטוח, הפוליסה וגבולות הכיסוי.</p>
     </div>
 
-    <div class="card mt-4" style="margin-top:1rem">
-      <div class="card-header">
-        <div class="card-header-icon" style="background:rgba(212,168,83,0.15)">🛡️</div>
-        <h3>פרטי פוליסת ביטוח</h3>
-      </div>
-      <div class="card-body">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>חברת ביטוח</label>
-            <select id="insuranceCompany">
-              <option value="">בחר...</option>
-              <option>הפניקס</option>
-              <option>כלל ביטוח</option>
-              <option>מגדל</option>
-              <option>הראל</option>
-              <option>מנורה מבטחים</option>
-              <option>איילון</option>
-              <option>AIG</option>
-              <option>שירביט</option>
-              <option>אחר</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>מספר פוליסה</label>
-            <input type="text" id="policyNum" placeholder="מספר פוליסה">
-          </div>
-          <div class="form-group">
-            <label>מספר תביעה</label>
-            <input type="text" id="claimNum" placeholder="מספר תביעה">
-          </div>
-          <div class="form-group">
-            <label>שמאי ממונה (אם קיים)</label>
-            <input type="text" id="adjustorName" placeholder="שם השמאי">
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- POLICY TYPE CARD -->
     <div class="card mt-4" style="margin-top:1rem;border-color:rgba(212,168,83,0.35)">
       <div class="card-header" style="background:rgba(212,168,83,0.05)">
@@ -1650,36 +1829,6 @@
       </div>
     </div>
 
-    <div class="card mt-4" style="margin-top:1rem">
-      <div class="card-header">
-        <div class="card-header-icon" style="background:rgba(212,168,83,0.15)">🏛️</div>
-        <h3>פרטי השמאי המדווח</h3>
-        <span class="badge" style="background:rgba(212,168,83,0.15);color:var(--accent)">🔒 קבוע</span>
-      </div>
-      <div class="card-body">
-        <div style="background:rgba(212,168,83,0.06);border:1px solid rgba(212,168,83,0.2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:0.84rem;color:var(--text-secondary)">
-          💡 פרטי השמאי ממולאים אוטומטית. מספר רישיון יעודכן בעתיד.
-        </div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>שם השמאי</label>
-            <input type="text" id="appraisalName" value="ירון אמיר" readonly style="opacity:0.7;cursor:default;background:rgba(212,168,83,0.05);border-color:rgba(212,168,83,0.3)">
-          </div>
-          <div class="form-group">
-            <label>מספר רישיון</label>
-            <input type="text" id="appraisalLicense" placeholder="יעודכן בקרוב" readonly style="opacity:0.5;cursor:default">
-          </div>
-          <div class="form-group">
-            <label>תאריך הביקור <span class="req">*</span></label>
-            <input type="date" id="visitDate">
-          </div>
-          <div class="form-group">
-            <label>שם חברת השמאות</label>
-            <input type="text" id="appraisalFirm" placeholder="חברת שמאות">
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- ============ STEP 4: DAMAGE DESCRIPTION ============ -->
@@ -1854,7 +2003,7 @@
         <div class="form-grid">
           <div class="form-group">
             <label>השתתפות עצמית (₪)</label>
-            <input type="number" id="deductible" placeholder="0" oninput="updateBoqTotal()">
+            <input type="number" id="deductible_display" placeholder="מוזן בפרק א׳" readonly style="opacity:0.6;cursor:default" onclick="goToStep(1)" title="ערך מוזן בפרק א׳">
           </div>
           <div class="form-group">
             <label>ירידת ערך (₪)</label>
@@ -2210,43 +2359,70 @@
 <div class="toast" id="toast"></div>
 
 <script>
-
-  // ====== APPRAISER PROFILE (defaults) ======
-  const APPRAISER = {
-    name: 'ירון אמיר',
-    role: 'שמאי רכוש',
-    phone: '050-329-2066',
-    email: 'yaronamir86@gmail.com'
-  };
-
 let currentStep = 1;
 const totalSteps = 9;
 let selectedEvent = null;
 let photos = [];
 
-// ====== AUTO-FILL FROM INSURED (step 1 → step 2 eventBrief) ======
-function autoFillFromInsured() {
-  const name    = document.getElementById('insuredName')?.value?.trim() || '___________';
-  const id      = document.getElementById('insuredId')?.value?.trim()   || '___________';
-  const evDate  = document.getElementById('eventDate')?.value;
-  const dateStr = evDate ? new Date(evDate).toLocaleDateString('he-IL') : '___________';
+// ====== CHAPTER A – LIVE SUMMARY & AUTO-FILL ======
+function chapterALive() {
+  const get  = id => document.getElementById(id)?.value?.trim() || '';
+  const fmtD = v  => v ? new Date(v).toLocaleDateString('he-IL', {day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+  const fmtN = v  => v ? '₪' + parseInt(v).toLocaleString('he-IL') : '';
 
+  const name    = get('insuredName');
+  const idNum   = get('insuredId');
+  const addr    = get('propAddress');
+  const company = get('insuranceCompany');
+  const policy  = get('policyNum');
+  const claim   = get('claimNum');
+  const evDate  = get('eventDate');
+  const visit   = get('visitDate');
+  const pfrom   = get('policyFrom');
+  const pto     = get('policyTo');
+  const ded     = get('deductible');
+  const dedC    = get('deductibleContents');
+
+  // Update live summary grid
+  const s = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || '—'; };
+  s('s_name',    name);
+  s('s_id',      idNum);
+  s('s_addr',    addr);
+  s('s_company', company);
+  s('s_policy',  policy);
+  s('s_claim',   claim);
+  s('s_event',   fmtD(evDate));
+  s('s_visit',   fmtD(visit));
+  s('s_period',  pfrom && pto ? fmtD(pfrom) + ' – ' + fmtD(pto) : pfrom ? 'מ-' + fmtD(pfrom) : pto ? 'עד ' + fmtD(pto) : '—');
+  s('s_ded',
+    ded || dedC
+      ? [ded  ? 'מבנה: '  + fmtN(ded)  : '',
+         dedC ? 'תכולה: ' + fmtN(dedC) : '']
+          .filter(Boolean).join(' | ')
+      : '—');
+
+  // Auto-fill eventBrief (step 2)
   const ta = document.getElementById('eventBrief');
-  if (!ta) return;
-
-  const tpl = `מן הפרטים אותם קיבלנו מפי המבוטח מר ${name}, ת.ז ${id}. עולה כי בתאריך ${dateStr}.`;
-  // Only auto-fill if field is empty or contains the previous template
-  if (!ta.value || ta.value.startsWith('מן הפרטים אותם קיבלנו')) {
-    ta.value = tpl;
+  if (ta) {
+    const tpl = `מן הפרטים אותם קיבלנו מפי המבוטח מר ${name || '___________'}, ת.ז ${idNum || '___________'}. עולה כי בתאריך ${evDate ? new Date(evDate).toLocaleDateString('he-IL') : '___________'}.`;
+    if (!ta.value || ta.value.startsWith('מן הפרטים אותם קיבלנו')) ta.value = tpl;
   }
 }
 
+// Legacy alias used in some places
+function autoFillFromInsured() { chapterALive(); }
+
 // ====== INIT ======
 window.onload = () => {
+  // Set today's date as default for reportDate
+  const today = new Date().toISOString().split('T')[0];
+  const rd = document.getElementById('reportDate');
+  if (rd && !rd.value) rd.value = today;
+
   updateNav();
   initCheckboxes();
-  refreshDamageTemplate();
   refreshDeclaration();
+  chapterALive(); // init summary bar
 };
 
 // ====== CHECKBOX SYSTEM – FIXED ======
@@ -3431,9 +3607,15 @@ function buildReport() {
   const extraExt = val('extraExtensions');
   if (extraExt) extensions.push(extraExt);
 
-  const reportDate = new Date().toLocaleDateString('he-IL', {year:'numeric',month:'long',day:'numeric'});
-  const visitDateFmt = val('visitDate') ? new Date(val('visitDate')).toLocaleDateString('he-IL') : '—';
-  const eventDateFmt = val('eventDate') ? new Date(val('eventDate')).toLocaleDateString('he-IL') : '—';
+  const fmt = d => d ? new Date(d).toLocaleDateString('he-IL') : '—';
+  const reportDate = val('reportDate')
+    ? new Date(val('reportDate')).toLocaleDateString('he-IL', {year:'numeric',month:'long',day:'numeric'})
+    : new Date().toLocaleDateString('he-IL', {year:'numeric',month:'long',day:'numeric'});
+  const visitDateFmt  = fmt(val('visitDate'));
+  const eventDateFmt  = fmt(val('eventDate'));
+  const lastDocFmt    = fmt(val('lastDocDate'));
+  const policyFromFmt = fmt(val('policyFrom'));
+  const policyToFmt   = fmt(val('policyTo'));
 
   // Rental section
   const rentalHTML = (propUsable === 'לא' && rental > 0) ? `
@@ -3448,29 +3630,69 @@ function buildReport() {
 
   document.getElementById('reportOutput').innerHTML = `
     <div class="rp-header">
-      <div class="rp-logo">🏛️</div>
-      <div class="rp-title">חוות דעת שמאי רכוש</div>
+      <div class="rp-logo" style="width:56px;height:56px;background:linear-gradient(135deg,#d4a853,#b8892f);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:24px;color:#0f1419;margin:0 auto 1rem;box-shadow:0 4px 16px rgba(212,168,83,0.3)">י״א</div>
+      <div class="rp-title">ירון אמיר – שמאי רכוש מוסמך</div>
+      <div class="rp-title" style="font-size:1.3rem;font-weight:600;margin-top:0.25rem">חוות דעת שמאי</div>
       <div class="rp-sub">
-        ${selectedEvent ? `סוג אירוע: ${evIcons[selectedEvent] || ''} ${evLabels[selectedEvent] || ''}` : ''}
-        &nbsp;|&nbsp; תאריך הדוח: ${reportDate}
+        ${selectedEvent ? `${evIcons[selectedEvent] || ''} ${evLabels[selectedEvent] || ''}` : 'הערכת נזק'}
+        &nbsp;|&nbsp; ${reportDate}
       </div>
     </div>
 
-    <h2>🗂️ פרטי הדוח</h2>
-    <dl class="rp-meta">
-      <dt>שמאי מדווח</dt><dd>${APPRAISER.name}</dd>
-      <dt>טלפון</dt><dd>${APPRAISER.phone}</dd>
-      <dt>דוא"ל</dt><dd>${APPRAISER.email}</dd>
-      <dt>מספר רישיון</dt><dd>${val('appraisalLicense') || 'יעודכן בקרוב'}</dd>
-      <dt>חברת שמאות</dt><dd>${val('appraisalFirm') || '—'}</dd>
-      <dt>תאריך ביקור</dt><dd>${visitDateFmt}</dd>
-      <dt>חברת ביטוח</dt><dd>${val('insuranceCompany') || '—'}</dd>
-      <dt>מספר פוליסה</dt><dd>${val('policyNum') || '—'}</dd>
-      <dt>מספר תביעה</dt><dd>${val('claimNum') || '—'}</dd>
-      <dt>תאריך האירוע</dt><dd>${eventDateFmt}</dd>
-    </dl>
+    <h2>🗂️ פרק א׳ – פרטי הפרויקט</h2>
 
-    <h2>🛡️ פרטי הפוליסה</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+
+      <div>
+        <h3 style="font-size:0.88rem;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">👤 פרטי המבוטח</h3>
+        <dl class="rp-meta">
+          <dt>שם מלא</dt><dd><strong>${val('insuredName') || '—'}</strong></dd>
+          <dt>מספר ת.ז. / ח.פ.</dt><dd>${val('insuredId') || '—'}</dd>
+          <dt>טלפון</dt><dd>${val('insuredPhone') || '—'}</dd>
+          <dt>דוא"ל</dt><dd>${val('insuredEmail') || '—'}</dd>
+          <dt>כתובת הנכס</dt><dd>${val('propAddress') || val('propStreet') || '—'}</dd>
+          <dt>קשר לנכס</dt><dd>${val('insuredRelation') || '—'}</dd>
+        </dl>
+      </div>
+
+      <div>
+        <h3 style="font-size:0.88rem;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🛡️ פרטי הפוליסה</h3>
+        <dl class="rp-meta">
+          <dt>חברת ביטוח</dt><dd><strong>${val('insuranceCompany') || '—'}</strong></dd>
+          <dt>מספר פוליסה</dt><dd>${val('policyNum') || '—'}</dd>
+          <dt>מספר תביעה</dt><dd>${val('claimNum') || '—'}</dd>
+          <dt>תקופת ביטוח</dt><dd>${policyFromFmt} – ${policyToFmt}</dd>
+          <dt>השתתפות עצמית</dt><dd>${val('deductible') ? fmtM(parseFloat(val('deductible'))) : '—'}</dd>
+          <dt>שמאי ממונה</dt><dd>${val('adjustorName') || '—'}</dd>
+        </dl>
+      </div>
+
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+
+      <div>
+        <h3 style="font-size:0.88rem;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">📅 תאריכים מרכזיים</h3>
+        <dl class="rp-meta">
+          <dt>תאריך קרות המקרה</dt><dd><strong>${eventDateFmt}</strong></dd>
+          <dt>תאריך ביקור בנכס</dt><dd>${visitDateFmt}</dd>
+          <dt>מסמך אחרון מהחברה</dt><dd>${lastDocFmt}</dd>
+          <dt>תאריך הפקת הדוח</dt><dd>${reportDate}</dd>
+        </dl>
+      </div>
+
+      <div>
+        <h3 style="font-size:0.88rem;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🏛️ פרטי השמאי המדווח</h3>
+        <dl class="rp-meta">
+          <dt>שם השמאי</dt><dd><strong>${val('appraisalName') || 'ירון אמיר'}</strong></dd>
+          <dt>מספר רישיון</dt><dd>${val('appraisalLicense') || '—'}</dd>
+          <dt>חברת שמאות</dt><dd>${val('appraisalFirm') || '—'}</dd>
+        </dl>
+      </div>
+
+    </div>
+
+    <h2>🛡️ פרטי הפוליסה – כיסוי וגבולות</h2>
     <dl class="rp-meta">
       <dt>סוג פוליסה</dt><dd>${cfg ? cfg.label : '—'}</dd>
       <dt>כיסוי מבנה</dt><dd>${cfg ? (cfg.structure ? '✅ כן' : '❌ לא') : '—'}</dd>
@@ -3490,14 +3712,6 @@ function buildReport() {
       <tbody>${underinsuranceHtml}</tbody>
     </table>
     ${val('underinsuranceNotes') ? `<p style="margin-top:8px"><strong>הערות:</strong> ${val('underinsuranceNotes')}</p>` : ''}` : ''}
-
-    <h2>👤 פרטי המבוטח</h2>
-    <dl class="rp-meta">
-      <dt>שם מלא</dt><dd>${val('insuredName') || '—'}</dd>
-      <dt>מספר ת.ז.</dt><dd>${val('insuredId') || '—'}</dd>
-      <dt>טלפון</dt><dd>${val('insuredPhone') || '—'}</dd>
-      <dt>קשר לנכס</dt><dd>${val('insuredRelation') || '—'}</dd>
-    </dl>
 
     <h2>🏠 פרטי הנכס</h2>
     <dl class="rp-meta">
