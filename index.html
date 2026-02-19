@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <title>מערכת חוות דעת – ירון אמיר שמאי רכוש</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap" rel="stylesheet">
@@ -976,13 +976,90 @@
   .divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
 
   /* ====== RESPONSIVE ====== */
+  /* ══════════════════════════════════════════════════════════════
+     MOBILE RESPONSIVE - COMPREHENSIVE
+  ══════════════════════════════════════════════════════════════ */
   @media (max-width: 768px) {
-    .event-types { grid-template-columns: 1fr 1fr; }
-    .form-grid { grid-template-columns: 1fr; }
-    .form-grid.cols-3 { grid-template-columns: 1fr 1fr; }
-    .damage-item { grid-template-columns: 1fr 1fr; }
-    .photo-grid { grid-template-columns: repeat(3, 1fr); }
-    .main { padding: 1rem; }
+    body { font-size: 15px; padding: 0; }
+    
+    /* Header */
+    .header { padding: 10px 12px; position: sticky; top: 0; z-index: 100; }
+    .header-inner { flex-direction: column; gap: 10px; align-items: stretch; }
+    .logo { gap: 10px; }
+    .logo-icon { width: 36px; height: 36px; font-size: 16px; }
+    .logo-text { font-size: 1rem; }
+    .logo-sub { font-size: 0.7rem; }
+    .header-actions { flex-wrap: wrap; gap: 6px; justify-content: stretch; }
+    .header-actions button { flex: 1; min-width: 70px; font-size: 0.75rem; padding: 8px 10px; }
+    #saveStatus { order: -1; width: 100%; justify-content: center; padding: 6px; background: var(--surface); border-radius: 6px; font-size: 0.75rem; }
+    
+    .main { padding: 12px; max-width: 100%; }
+    
+    /* Steps nav */
+    .steps-nav { gap: 6px; margin-bottom: 1rem; padding-bottom: 8px; }
+    .step-pill { padding: 8px 12px; font-size: 0.75rem; }
+    
+    /* Content */
+    .step-header h2 { font-size: 1.4rem; }
+    .step-header p { font-size: 0.85rem; }
+    .card { margin-bottom: 1rem; }
+    .card-header { flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 14px; }
+    .card-header h3 { font-size: 1rem; }
+    .card-header-icon { display: none; }
+    .card-body { padding: 14px; }
+    
+    /* Forms - ALL single column */
+    .form-grid,
+    .form-grid.cols-2,
+    .form-grid.cols-3,
+    .form-grid.cols-4 { grid-template-columns: 1fr !important; gap: 12px; }
+    
+    /* Inputs - larger touch targets + prevent zoom */
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    input[type="tel"],
+    select { min-height: 44px; font-size: 16px !important; padding: 10px 12px; }
+    textarea { min-height: 100px; font-size: 16px !important; }
+    label { font-size: 0.85rem; }
+    
+    /* Buttons */
+    .btn { min-height: 44px; padding: 10px 16px; font-size: 0.9rem; }
+    .radio-group { flex-direction: column; gap: 8px; }
+    .radio-btn { width: 100%; min-height: 44px; padding: 10px; justify-content: center; }
+    
+    /* Checkboxes */
+    .checkbox-group { grid-template-columns: 1fr; gap: 8px; }
+    .checkbox-item { min-height: 44px; padding: 10px 12px; }
+    
+    /* Event cards */
+    .event-types { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .event-type-card { min-height: 100px; padding: 14px; }
+    .event-type-card h3 { font-size: 1rem; }
+    
+    /* Photos */
+    .photo-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+    
+    /* BOQ */
+    .boq-section table { font-size: 0.75rem; display: block; overflow-x: auto; }
+    .boq-section td, .boq-section th { padding: 6px; }
+    .damage-item { grid-template-columns: 1fr; }
+    
+    /* Damage tabs */
+    .damage-tabs { gap: 6px; }
+    .damage-tab { font-size: 0.75rem; padding: 8px 12px; }
+    
+    /* Summary */
+    #chapterAGrid { grid-template-columns: 1fr !important; font-size: 0.8rem; }
+    
+    /* Report */
+    .report-preview { padding: 12px; font-size: 0.85rem; }
+  }
+  
+  @media (max-width: 374px) {
+    .step-pill { font-size: 0.7rem; padding: 6px 8px; }
+    .event-types { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -1089,6 +1166,14 @@
             <input type="text" id="propAddress" placeholder="רחוב, מספר, עיר" oninput="chapterALive()">
           </div>
           <div class="form-group">
+            <label>סוג מבוטח</label>
+            <div class="radio-group" id="insuredType">
+              <div class="radio-btn" onclick="selectRadio(this,'insuredType')">פרטי</div>
+              <div class="radio-btn" onclick="selectRadio(this,'insuredType')">עסקי</div>
+            </div>
+            <span class="text-sm text-muted" style="display:block;margin-top:4px">עסקי = ללא מע"מ (מקזז), פרטי = כולל מע"מ</span>
+          </div>
+          <div class="form-group">
             <label>קשר לנכס</label>
             <select id="insuredRelation">
               <option value="">בחר...</option>
@@ -1111,6 +1196,10 @@
       </div>
       <div class="card-body">
         <div class="form-grid">
+          <div class="form-group">
+            <label>מספר תיק</label>
+            <input type="text" id="caseNumber" placeholder="2026/01/0000">
+          </div>
           <div class="form-group">
             <label>חברת ביטוח <span class="req">*</span></label>
             <select id="insuranceCompany" onchange="chapterALive()">
@@ -1343,10 +1432,10 @@
           <div class="form-group mt-4" style="margin-top:1rem">
             <label>תיאור האירוע בקצרה <span class="req">*</span></label>
             <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:8px">
-              🔒 ממולא אוטומטית לפי פרטי המבוטח ותאריך האירוע
-              <button type="button" onclick="autoFillFromInsured()" style="background:rgba(212,168,83,0.15);border:1px solid rgba(212,168,83,0.3);color:var(--accent);border-radius:99px;padding:2px 10px;font-size:0.72rem;cursor:pointer;font-family:inherit">↺ רענן</button>
+              🤖 טקסט עשיר אוטומטי בסגנון מקצועי
+              <button type="button" onclick="document.getElementById('eventBrief').value = generateCircumstancesText()" style="background:rgba(212,168,83,0.15);border:1px solid rgba(212,168,83,0.3);color:var(--accent);border-radius:99px;padding:2px 10px;font-size:0.72rem;cursor:pointer;font-family:inherit">↺ צור טקסט מלא</button>
             </div>
-            <textarea id="eventBrief" style="min-height:90px"></textarea>
+            <textarea id="eventBrief" style="min-height:150px" placeholder="לחץ 'צור טקסט מלא' למילוי אוטומטי מקצועי..."></textarea>
           </div>
 
           <!-- FIRE SPECIFIC -->
@@ -2277,7 +2366,83 @@
   <div id="step8" class="step-content hidden">
     <div class="step-header">
       <h2>⚖️ מסקנות ושיקולים</h2>
-      <p>הוסף מסקנות מקצועיות, המלצות ושיקולים לדוח.</p>
+      <p>הוסף מומחים חיצוניים, מסקנות מקצועיות והמלצות.</p>
+    </div>
+
+    <!-- EXPERTS SECTION -->
+    <div class="section open" id="sec-experts">
+      <div class="section-trigger" onclick="toggleSection(this)">
+        <div class="section-number">0</div>
+        <h3>מומחים וגורמים חיצוניים</h3>
+        <span class="section-arrow">▼</span>
+      </div>
+      <div class="section-content">
+        <hr class="section-divider">
+        <p class="text-sm text-muted mb-3">תעד מומחים שמונו וממצאיהם (לפי רלוונטיות לאירוע)</p>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label>חוקר שריפות</label>
+            <input type="text" id="expertFireInvestigator" placeholder="שם החוקר / החברה">
+          </div>
+          <div class="form-group">
+            <label>דוח חוקר הוגש?</label>
+            <div class="radio-group" id="expertFireReport">
+              <div class="radio-btn" onclick="selectRadio(this,'expertFireReport')">כן</div>
+              <div class="radio-btn" onclick="selectRadio(this,'expertFireReport')">לא</div>
+              <div class="radio-btn" onclick="selectRadio(this,'expertFireReport')">לא רלוונטי</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>מאתר נזילות</label>
+            <input type="text" id="expertLeakDetector" placeholder="שם החברה">
+          </div>
+          <div class="form-group">
+            <label>דוח מאתר הוגש?</label>
+            <div class="radio-group" id="expertLeakReport">
+              <div class="radio-btn" onclick="selectRadio(this,'expertLeakReport')">כן</div>
+              <div class="radio-btn" onclick="selectRadio(this,'expertLeakReport')">לא</div>
+              <div class="radio-btn" onclick="selectRadio(this,'expertLeakReport')">לא רלוונטי</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>קונסטרוקטור / מהנדס בניין</label>
+            <input type="text" id="expertConstructor" placeholder="שם המהנדס">
+          </div>
+          <div class="form-group">
+            <label>כתב כמויות הנדסי הוגש?</label>
+            <div class="radio-group" id="expertConstructorReport">
+              <div class="radio-btn" onclick="selectRadio(this,'expertConstructorReport')">כן</div>
+              <div class="radio-btn" onclick="selectRadio(this,'expertConstructorReport')">לא</div>
+              <div class="radio-btn" onclick="selectRadio(this,'expertConstructorReport')">לא רלוונטי</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>רואה חשבון</label>
+            <input type="text" id="expertAccountant" placeholder="שם רו״ח">
+          </div>
+          <div class="form-group">
+            <label>טופס י״א (פחת) הוגש?</label>
+            <div class="radio-group" id="expertForm11">
+              <div class="radio-btn" onclick="selectRadio(this,'expertForm11')">כן</div>
+              <div class="radio-btn" onclick="selectRadio(this,'expertForm11')">לא</div>
+              <div class="radio-btn" onclick="selectRadio(this,'expertForm11')">לא רלוונטי</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>מומחה נוסף (סוג)</label>
+            <input type="text" id="expertOtherType" placeholder="לדוגמה: מהנדס חשמל">
+          </div>
+          <div class="form-group">
+            <label>שם המומחה</label>
+            <input type="text" id="expertOtherName" placeholder="שם">
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="section open" id="sec-responsibility">
@@ -4056,6 +4221,108 @@ function generateRecommendations() {
   if (ta) ta.value = recs.join('\n');
 }
 
+// ====== RICH NARRATIVE TEXT ======
+function generateCircumstancesText() {
+  const name = val('insuredName');
+  const id = val('insuredId');
+  const eventDate = val('eventDate');
+  const propAddress = val('propAddress');
+  const propType = val('propType');
+  const propArea = val('propArea');
+  
+  const eventLabels = {
+    fire: 'פרצה דליקה',
+    water: 'אירעה נזילת מים',
+    break_in: 'בוצעה פריצה',
+    earthquake: 'ארעה רעידת אדמה',
+    other: 'אירע מקרה ביטוח'
+  };
+  
+  let text = `מן הפרטים אותם קיבלנו מפי המבוטח מר/גב' ${name || '___________'}, ת.ז ${id || '___________'}.\n\n`;
+  
+  text += `עולה כי בתאריך ${eventDate ? new Date(eventDate).toLocaleDateString('he-IL') : '___________'} ${eventLabels[selectedEvent] || 'אירע מקרה ביטוח'}`;
+  
+  if (propAddress) {
+    text += ` בנכס הממוקם ב${propAddress}`;
+  }
+  text += '.\n\n';
+  
+  // Add damage categories if selected
+  const damageTypes = Array.from(document.querySelectorAll('#step5 .checkbox-item.checked .cb-label'))
+    .map(el => el.textContent.trim());
+  
+  if (damageTypes.length > 0) {
+    text += `כתוצאה מהאירוע נגרמו נזקים ל: ${damageTypes.join(', ')}.\n\n`;
+  }
+  
+  // Property description
+  if (propType || propArea) {
+    text += `הנכס הינו ${propType || 'נכס מגורים'}`;
+    if (propArea) {
+      text += ` בשטח של ${propArea} מ"ר`;
+    }
+    text += '.\n\n';
+  }
+  
+  // Visit date
+  const visitDate = val('visitDate');
+  if (visitDate) {
+    text += `הביקור בנכס נערך ביום ${new Date(visitDate).toLocaleDateString('he-IL', {year: 'numeric', month: 'long', day: 'numeric'})}. במהלך הביקור נבדקו הנזקים, תועדו הממצאים ונערכה חקירה ראשונית של נסיבות האירוע.`;
+  }
+  
+  return text;
+}
+
+// ====== AUTO-GENERATE RECOMMENDATIONS ======
+function generateRecommendations() {
+  const boqData = getBoqData();
+  let recs = [];
+  
+  // Opening - always first
+  recs.push('🔧 סדר עדיפויות מומלץ לשיקום הנכס:\n');
+  
+  // Critical first steps
+  const hasDemolition = boqData.some(sec => 
+    sec.rows.some(r => r.desc.includes('פירוק') || r.desc.includes('פינוי'))
+  );
+  const hasWaterproofing = boqData.some(sec =>
+    sec.rows.some(r => r.desc.includes('איטום') || r.desc.includes('אינסטלציה'))
+  );
+  const hasElectrical = boqData.some(sec =>
+    sec.rows.some(r => r.desc.includes('חשמל') || r.desc.includes('לוח חשמל'))
+  );
+  
+  if (selectedEvent === 'water' || hasWaterproofing) {
+    recs.push('1️⃣ טיפול מיידי במקור הנזילה - תיקון מערכת האינסטלציה וביצוע איטום מקצועי.');
+  } else if (selectedEvent === 'fire') {
+    recs.push('1️⃣ בדיקת יציבות מבנית ואישור מהנדס קונסטרוקציה לפני תחילת עבודות.');
+  }
+  
+  if (hasDemolition) {
+    recs.push('2️⃣ פירוק מבוקר של כל החומרים הפגומים ופינוי לאתר מורשה.');
+  }
+  
+  if (hasWaterproofing) {
+    recs.push('3️⃣ ייבוש יסודי של כל שכבות המצע והקירות (זמן ייבוש מינימלי: 7-14 ימים).');
+  }
+  
+  if (hasElectrical) {
+    recs.push('4️⃣ בדיקת תקינות מערכת החשמל ע"י חשמלאי מוסמך לפני חיבור מחדש.');
+  }
+  
+  recs.push('5️⃣ ביצוע עבודות תשתית (טיח, איטום, צנרת, חשמל) לפי כתב הכמויות.');
+  recs.push('6️⃣ עבודות גמר (ריצוף, צביעה, נגרות) רק לאחר אישור שכבות התשתית.');
+  recs.push('7️⃣ ניקיון סופי ובדיקת קבלה.');
+  
+  recs.push('\n⚠️ הערות חשובות:');
+  recs.push('• טרם ביצוע תיקוני גמר נדרש טיפול יסודי במקור הנזק.');
+  recs.push('• מומלץ פיקוח הנדסי לאורך כל שלבי השיקום.');
+  recs.push('• יש לוודא תאימות החומרים והשיטות לתקנים הישראליים.');
+
+  const ta = document.getElementById('repairPriority');
+  if (ta) ta.value = recs.join('\n');
+}
+
 // ====== AUTO-GENERATE CAUSE TEXT ======
 function generateCauseText() {
   const eventType = selectedEvent; // 'water', 'fire', 'break_in', etc.
@@ -4247,6 +4514,7 @@ function buildReport() {
       <div class="rp-logo" style="width:56px;height:56px;background:linear-gradient(135deg,#d4a853,#b8892f);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:24px;color:#0f1419;margin:0 auto 1rem;box-shadow:0 4px 16px rgba(212,168,83,0.3)">י״א</div>
       <div class="rp-title">ירון אמיר – שמאי רכוש מוסמך</div>
       <div class="rp-title" style="font-size:1.3rem;font-weight:600;margin-top:0.25rem">חוות דעת שמאי</div>
+      ${val('caseNumber') ? `<div style="font-size:0.9rem;color:#64748b;margin-top:0.5rem">מספר תיק: <strong>${val('caseNumber')}</strong></div>` : ''}
       <div class="rp-sub">
         ${selectedEvent ? `${evIcons[selectedEvent] || ''} ${evLabels[selectedEvent] || ''}` : 'הערכת נזק'}
         &nbsp;|&nbsp; ${reportDate}
@@ -4461,6 +4729,74 @@ function buildReport() {
     })()}
 
     ${val('amountNotes') ? `<p style="margin-top:12px;font-size:0.85rem"><strong>הערות לסכום:</strong> ${val('amountNotes')}</p>` : ''}
+
+    <h2>📊 ריכוז הערכות הנזק</h2>
+    <table style="width:100%;border-collapse:collapse;margin-top:1rem;font-size:0.88rem">
+      <thead>
+        <tr style="background:#0f1419;color:white">
+          <th style="padding:10px 14px;text-align:right;border:1px solid #334155">קטגוריית נזק</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid #334155;width:140px">ערך תביעה (₪)</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid #334155;width:140px">ערך כינון (₪)</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid #334155;width:140px">ערך שיפוי (₪)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 14px;border:1px solid #e2e8f0;font-weight:600">נזקי מבנה</td>
+          <td style="padding:8px 14px;border:1px solid #e2e8f0;text-align:center">${fmtM(coveredWithVat)}</td>
+          <td style="padding:8px 14px;border:1px solid #e2e8f0;text-align:center">${fmtM(coveredWithVat)}</td>
+          <td style="padding:8px 14px;border:1px solid #e2e8f0;text-align:center">${fmtM(net)}</td>
+        </tr>
+        <tr style="background:#fef9ec">
+          <td colspan="3" style="padding:10px 14px;border:1px solid #e2e8f0;text-align:right;font-weight:700;color:#92400e">פחות השתתפות עצמית:</td>
+          <td style="padding:10px 14px;border:1px solid #e2e8f0;text-align:center;font-weight:700;color:#92400e">(${fmtM(deductible)})</td>
+        </tr>
+        ${depreciation > 0 ? `<tr>
+          <td colspan="3" style="padding:10px 14px;border:1px solid #e2e8f0;text-align:right;font-weight:600">פחות ירידת ערך/פחת:</td>
+          <td style="padding:10px 14px;border:1px solid #e2e8f0;text-align:center;font-weight:600">(${fmtM(depreciation)})</td>
+        </tr>` : ''}
+        <tr style="background:#d4a853;color:#0f1419">
+          <td colspan="3" style="padding:12px 14px;border:1px solid #b8892f;text-align:right;font-weight:800;font-size:1rem">💎 סה"כ נטו לתשלום:</td>
+          <td style="padding:12px 14px;border:1px solid #b8892f;text-align:center;font-weight:800;font-size:1.05rem">${fmtM(net)}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:8px;font-size:0.8rem;color:#64748b">
+      <strong>הערה:</strong> ערך תביעה = דרישת המבוטח | ערך כינון = חדש תחת ישן | ערך שיפוי = לאחר פחת והשתתפות עצמית
+    </p>
+
+    ${(() => {
+      const experts = [];
+      if (val('expertFireInvestigator')) experts.push({type: 'חוקר שריפות', name: val('expertFireInvestigator'), report: getRadioValue('expertFireReport')});
+      if (val('expertLeakDetector')) experts.push({type: 'מאתר נזילות', name: val('expertLeakDetector'), report: getRadioValue('expertLeakReport')});
+      if (val('expertConstructor')) experts.push({type: 'קונסטרוקטור', name: val('expertConstructor'), report: getRadioValue('expertConstructorReport')});
+      if (val('expertAccountant')) experts.push({type: 'רואה חשבון', name: val('expertAccountant'), report: getRadioValue('expertForm11')});
+      if (val('expertOtherType') && val('expertOtherName')) experts.push({type: val('expertOtherType'), name: val('expertOtherName'), report: null});
+      
+      if (experts.length === 0) return '';
+      
+      return `
+      <h2>👥 מומחים וגורמים חיצוניים שמונו</h2>
+      <table style="width:100%;border-collapse:collapse;margin-top:1rem;font-size:0.88rem">
+        <thead>
+          <tr style="background:#f8fafc">
+            <th style="padding:8px 12px;text-align:right;border:1px solid #e2e8f0">תפקיד</th>
+            <th style="padding:8px 12px;text-align:right;border:1px solid #e2e8f0">שם</th>
+            <th style="padding:8px 12px;text-align:center;border:1px solid #e2e8f0;width:120px">דוח הוגש</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${experts.map(e => `
+            <tr>
+              <td style="padding:8px 12px;border:1px solid #e2e8f0;font-weight:600">${e.type}</td>
+              <td style="padding:8px 12px;border:1px solid #e2e8f0">${e.name}</td>
+              <td style="padding:8px 12px;border:1px solid #e2e8f0;text-align:center">${e.report === 'כן' ? '✅ כן' : e.report === 'לא' ? '❌ לא' : e.report || '—'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      `;
+    })()}
 
     <h2>⚖️ מסקנות ושיקולים</h2>
     ${coverageDecision ? `<p><strong>קביעת כיסוי:</strong> ${coverageDecision}</p>` : ''}
