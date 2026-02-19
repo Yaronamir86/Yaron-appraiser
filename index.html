@@ -986,18 +986,39 @@
     
     /* Header */
     .header { 
-      padding: 10px 12px; 
-      position: relative; /* Changed from sticky to relative on mobile */
-      margin-bottom: 12px; 
+      padding: 8px 12px; 
+      position: relative;
+      margin-bottom: 8px; 
     }
-    .header-inner { flex-direction: column; gap: 10px; align-items: stretch; }
-    .logo { gap: 10px; }
-    .logo-icon { width: 36px; height: 36px; font-size: 16px; }
-    .logo-text { font-size: 1rem; }
-    .logo-sub { font-size: 0.7rem; }
-    .header-actions { flex-wrap: wrap; gap: 6px; justify-content: stretch; }
-    .header-actions button { flex: 1; min-width: 70px; font-size: 0.75rem; padding: 8px 10px; }
-    #saveStatus { order: -1; width: 100%; justify-content: center; padding: 6px; background: var(--surface); border-radius: 6px; font-size: 0.75rem; }
+    .header-inner { 
+      flex-direction: row; /* Keep horizontal on mobile */
+      gap: 8px; 
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .logo { 
+      gap: 8px; 
+      flex: 0 0 auto;
+    }
+    .logo-icon { width: 32px; height: 32px; font-size: 14px; }
+    .logo-text { font-size: 0.85rem; }
+    .logo-sub { display: none; } /* Hide subtitle on mobile */
+    .header-actions { 
+      flex-wrap: wrap; 
+      gap: 4px; 
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .header-actions button { 
+      flex: 0 0 auto;
+      min-width: 36px;
+      font-size: 0.7rem; 
+      padding: 6px 8px;
+      white-space: nowrap;
+    }
+    #saveStatus { 
+      display: none !important; /* Hide save status on mobile to save space */
+    }
     
     .main { padding: 12px; max-width: 100%; padding-top: 0; }
     
