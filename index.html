@@ -996,8 +996,21 @@
     .main { padding: 12px; max-width: 100%; }
     
     /* Steps nav */
-    .steps-nav { gap: 6px; margin-bottom: 1rem; padding-bottom: 8px; }
-    .step-pill { padding: 8px 12px; font-size: 0.75rem; }
+    .steps-nav { 
+      gap: 6px; 
+      margin-bottom: 1rem; 
+      padding-bottom: 8px;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+    .step-pill { 
+      padding: 8px 12px; 
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
     
     /* Content */
     .step-header h2 { font-size: 1.4rem; }
