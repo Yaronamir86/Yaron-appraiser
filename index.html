@@ -985,7 +985,11 @@
     body { font-size: 15px; padding: 0; }
     
     /* Header */
-    .header { padding: 10px 12px; position: sticky; top: 0; z-index: 100; }
+    .header { 
+      padding: 10px 12px; 
+      position: relative; /* Changed from sticky to relative on mobile */
+      margin-bottom: 12px; 
+    }
     .header-inner { flex-direction: column; gap: 10px; align-items: stretch; }
     .logo { gap: 10px; }
     .logo-icon { width: 36px; height: 36px; font-size: 16px; }
@@ -995,12 +999,13 @@
     .header-actions button { flex: 1; min-width: 70px; font-size: 0.75rem; padding: 8px 10px; }
     #saveStatus { order: -1; width: 100%; justify-content: center; padding: 6px; background: var(--surface); border-radius: 6px; font-size: 0.75rem; }
     
-    .main { padding: 12px; max-width: 100%; }
+    .main { padding: 12px; max-width: 100%; padding-top: 0; }
     
     /* Steps nav */
     .steps-nav { 
       gap: 6px; 
-      margin-bottom: 1rem; 
+      margin-bottom: 1rem;
+      margin-top: 1rem;
       padding-bottom: 8px;
       flex-wrap: nowrap !important;
       overflow-x: auto !important;
