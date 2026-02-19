@@ -510,6 +510,7 @@
   /* ====== STEPS ====== */
   .steps-nav {
     display: flex;
+    flex-wrap: nowrap;
     gap: 4px;
     margin-bottom: 1.5rem;
     overflow-x: auto;
@@ -525,6 +526,7 @@
   .step-pill {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
     gap: 7px;
     padding: 7px 14px;
     border-radius: 99px;
@@ -1004,11 +1006,26 @@
       overflow-x: auto !important;
       -webkit-overflow-scrolling: touch;
       scroll-behavior: smooth;
+      scroll-padding: 0 12px;
+      /* Show scrollbar on mobile so users know they can scroll */
+      scrollbar-width: thin !important;
+      -ms-overflow-style: auto !important;
+    }
+    .steps-nav::-webkit-scrollbar {
+      display: block !important;
+      height: 4px;
+    }
+    .steps-nav::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.1);
+    }
+    .steps-nav::-webkit-scrollbar-thumb {
+      background: rgba(212,168,83,0.5);
+      border-radius: 2px;
     }
     .step-pill { 
       padding: 8px 12px; 
       font-size: 0.75rem;
-      flex-shrink: 0;
+      flex-shrink: 0 !important;
       white-space: nowrap;
     }
     
